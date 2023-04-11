@@ -258,6 +258,12 @@ $(document).ready(function(){
 			$("#selectAll").prop("checked", false);
 		}
 	});
+	$('#deleteModal').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget)
+	  var id = button.data('id')
+	  var modal = $(this)
+	  modal.find('.modal-body input').val(id)
+	});
 });
 </script>
 </head>
@@ -268,7 +274,7 @@ $(document).ready(function(){
 				<div class="table-title">
 					<div class="row">
 						<div class="col-xs-4">
-							<h2>Table <b>Employees</b></h2>
+							<h2>Table <b>{{ table_name }}</b></h2>
 						</div>
 						<div class="col-xs-4">
 							<div class="input-group">
@@ -277,14 +283,18 @@ $(document).ready(function(){
 							</div>
 						</div>
 						<div class="col-xs-4">
-							<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add</span></a>
+							<a href="#addModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add</span></a>
 							<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>
 							<div class="dropdown">
 								<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Load Table<span class="caret"></span></button>
 									<ul class="dropdown-menu dropdown-menu-right">
-									<li class="active"><a href="#">Employees</a></li>
-									<li><a href="#">Departments</a></li>
-									<li><a href="#">Offices</a></li>
+										{% for tn in table_list %}
+										{% if tn == table_name %}
+										<li class="active"><a href="{{ url_for('data', table_name=tn) }}">{{ table_name }}</a></li>
+										{% else %}
+										<li><a href="{{ url_for('data', table_name=tn) }}">{{ tn }}</a></li>
+										{% endif %}
+										{% endfor %}
 									</ul>
 							</div>
 						</div>
@@ -299,217 +309,73 @@ $(document).ready(function(){
 									<label for="selectAll"></label>
 								</span>
 							</th>
-							<th>Name</th>
-							<th>Email</th>
-							<th>Address</th>
-							<th>Phone</th>
-							<th>Actions</th>
+							<th>SR No.</th>
+							{% for col in view_column_list %}
+							<th>{{ col }}</th>
+							{% endfor %}
 						</tr>
 					</thead>
 					<tbody>
+						{% for dp in data_list %}
 						<tr>
 							<td>
 								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox1" name="options[]" value="1">
-									<label for="checkbox1"></label>
+									<input type="checkbox" id="checkbox{{ loop.index0 }}" name="options[]" value="1">
+									<label for="checkbox{{ loop.index0 }}"></label>
 								</span>
 							</td>
-							<td>Thomas Hardy</td>
-							<td>thomashardy@mail.com</td>
-							<td>89 Chiaroscuro Rd, Portland, USA</td>
-							<td>(171) 555-2222</td>
+							<td>{{ loop.index0 }}</td>
+							{% for col in view_column_list %}
+							<td>{{ dp.get(col) }}</td>
+							{% endfor %}
+
 							<td>
 								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+								<a href="#deleteModal" class="delete" data-toggle="modal" data-id="{{ loop.index0 }}"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
 							</td>
 						</tr>
-						<tr>
-							<td>
-								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox2" name="options[]" value="1">
-									<label for="checkbox2"></label>
-								</span>
-							</td>
-							<td>Dominique Perrier</td>
-							<td>dominiqueperrier@mail.com</td>
-							<td>Obere Str. 57, Berlin, Germany</td>
-							<td>(313) 555-5735</td>
-							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox3" name="options[]" value="1">
-									<label for="checkbox3"></label>
-								</span>
-							</td>
-							<td>Maria Anders</td>
-							<td>mariaanders@mail.com</td>
-							<td>25, rue Lauriston, Paris, France</td>
-							<td>(503) 555-9931</td>
-							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox4" name="options[]" value="1">
-									<label for="checkbox4"></label>
-								</span>
-							</td>
-							<td>Fran Wilson</td>
-							<td>franwilson@mail.com</td>
-							<td>C/ Araquil, 67, Madrid, Spain</td>
-							<td>(204) 619-5731</td>
-							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox5" name="options[]" value="1">
-									<label for="checkbox5"></label>
-								</span>
-							</td>
-							<td>Martin Blank</td>
-							<td>martinblank@mail.com</td>
-							<td>Via Monte Bianco 34, Turin, Italy</td>
-							<td>(480) 631-2097</td>
-							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox1" name="options[]" value="1">
-									<label for="checkbox1"></label>
-								</span>
-							</td>
-							<td>Thomas Hardy</td>
-							<td>thomashardy@mail.com</td>
-							<td>89 Chiaroscuro Rd, Portland, USA</td>
-							<td>(171) 555-2222</td>
-							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox1" name="options[]" value="1">
-									<label for="checkbox1"></label>
-								</span>
-							</td>
-							<td>Thomas Hardy</td>
-							<td>thomashardy@mail.com</td>
-							<td>89 Chiaroscuro Rd, Portland, USA</td>
-							<td>(171) 555-2222</td>
-							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox1" name="options[]" value="1">
-									<label for="checkbox1"></label>
-								</span>
-							</td>
-							<td>Thomas Hardy</td>
-							<td>thomashardy@mail.com</td>
-							<td>89 Chiaroscuro Rd, Portland, USA</td>
-							<td>(171) 555-2222</td>
-							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox1" name="options[]" value="1">
-									<label for="checkbox1"></label>
-								</span>
-							</td>
-							<td>Thomas Hardy</td>
-							<td>thomashardy@mail.com</td>
-							<td>89 Chiaroscuro Rd, Portland, USA</td>
-							<td>(171) 555-2222</td>
-							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span class="custom-checkbox">
-									<input type="checkbox" id="checkbox1" name="options[]" value="1">
-									<label for="checkbox1"></label>
-								</span>
-							</td>
-							<td>Thomas Hardy</td>
-							<td>thomashardy@mail.com</td>
-							<td>89 Chiaroscuro Rd, Portland, USA</td>
-							<td>(171) 555-2222</td>
-							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-								<a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-						</tr>
+						{% endfor %}
 					</tbody>
 				</table>
 				<div class="clearfix">
-					<div class="hint-text">Showing <b>10</b> out of <b>25</b> entries</div>
+					<div class="hint-text">Showing <b>{{ record_count }}</b> out of <b>{{ table_count }}</b> entries</div>
 					<ul class="pagination">
-						<li class="page-item disabled"><a href="#">Previous</a></li>
-						<li class="page-item"><a href="#" class="page-link">1</a></li>
-						<li class="page-item"><a href="#" class="page-link">2</a></li>
-						<li class="page-item active"><a href="#" class="page-link">3</a></li>
-						<li class="page-item"><a href="#" class="page-link">4</a></li>
-						<li class="page-item"><a href="#" class="page-link">5</a></li>
-						<li class="page-item"><a href="#" class="page-link">Next</a></li>
+						<li class="page-item"><a href="{{ url_for('data', table_name=table_name, page_num=0) }}"><b> << </b></a></li>
+						<li class="page-item"><a href="{{ url_for('data', table_name=table_name, page_num=page_num-1) }}"><b> < </b></a></li>
+						<li class="page-item enable"><a href="{{ url_for('data', table_name=table_name, page_num=page_num) }}"><b> {{ page_num }} </b></a></li>
+						<li class="page-item"><a href="{{ url_for('data', table_name=table_name, page_num=page_num+1) }}"><b> > </b></a></li>
+						<li class="page-item"><a href="{{ url_for('data', table_name=table_name, page_num=total_page) }}"><b> >> </b></a></li>
 					</ul>
 				</div>
 			</div>
 		</div>
     </div>
 	<!-- Edit Modal HTML -->
-	<div id="addEmployeeModal" class="modal fade">
+	<div id="addModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form>
+				<form action="{{ url_for('api_add', table_name=table_name) }}" method="post">
 					<div class="modal-header">
-						<h4 class="modal-title">Add Employee</h4>
+						<h4 class="modal-title">Add {{ table_name }}</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">
+						{% for key, value in insert_column_list.items() %}
 						<div class="form-group">
-							<label>Name</label>
-							<input type="text" class="form-control" required>
+							<label>{{ key }}</label>
+							{% if "int" in value["type"] or "double" in value["type"] or "num" in value["type"]  %}
+							<input type="number" class="form-control" name="{{ key }}" required>
+							{% elif "date" in value["type"]  %}
+							<input type="date" class="form-control" name="{{ key }}" required>
+							{% elif "timestamp" in value["type"]  %}
+							<input type="datetime-local" class="form-control" name="{{ key }}" required>
+							{% elif "char" in value["type"] and value["length"] > 500 %}
+							<textarea class="form-control" name="{{ key }}" required></textarea>
+							{% else %}
+							<input type="text" class="form-control" name="{{ key }}" required>
+							{% endif %}
 						</div>
-						<div class="form-group">
-							<label>Email</label>
-							<input type="email" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Address</label>
-							<textarea class="form-control" required></textarea>
-						</div>
-						<div class="form-group">
-							<label>Phone</label>
-							<input type="text" class="form-control" required>
-						</div>
+						{% endfor %}
 					</div>
 					<div class="modal-footer">
 						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
@@ -555,15 +421,19 @@ $(document).ready(function(){
 		</div>
 	</div>
 	<!-- Delete Modal HTML -->
-	<div id="deleteEmployeeModal" class="modal fade">
+	<div id="deleteModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form>
+				<form action="{{ url_for('api_drop', table_name=table_name, page_num=page_num) }}" method="post">
 					<div class="modal-header">
 						<h4 class="modal-title">Delete Employee</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">
+						<div class="form-group">
+							<label for="delete-id" class="col-form-label">SR No.</label>
+							<input type="text" class="form-control" id="delete-id" name="id">
+						</div>
 						<p>Are you sure you want to delete these Records?</p>
 						<p class="text-warning"><small>This action cannot be undone.</small></p>
 					</div>
