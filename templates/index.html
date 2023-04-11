@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -264,6 +264,12 @@ $(document).ready(function(){
 	  var modal = $(this)
 	  modal.find('.modal-body input').val(id)
 	});
+	$('#editModal').on('show.bs.modal', function (event) {
+	  var button = $(event.relatedTarget)
+	  var id = button.data('id')
+	  var modal = $(this)
+	  modal.find('.modal-body #edit-id').val(id)
+	});
 });
 </script>
 </head>
@@ -330,7 +336,7 @@ $(document).ready(function(){
 							{% endfor %}
 
 							<td>
-								<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+								<a href="#editModal" class="edit" data-toggle="modal" data-id="{{ loop.index0 }}"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
 								<a href="#deleteModal" class="delete" data-toggle="modal" data-id="{{ loop.index0 }}"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
 							</td>
 						</tr>
@@ -386,31 +392,38 @@ $(document).ready(function(){
 		</div>
 	</div>
 	<!-- Edit Modal HTML -->
-	<div id="editEmployeeModal" class="modal fade">
+	<div id="editModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form>
+				<form action="{{ url_for('api_edit', table_name=table_name, page_num=page_num) }}" method="post">
 					<div class="modal-header">
-						<h4 class="modal-title">Edit Employee</h4>
+						<h4 class="modal-title">Edit {{ table_name }}</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<label>Name</label>
-							<input type="text" class="form-control" required>
+							<label for="edit-id" class="col-form-label">SR No.</label>
+							<input type="text" class="form-control" id="edit-id" name="id">
 						</div>
-						<div class="form-group">
-							<label>Email</label>
-							<input type="email" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Address</label>
-							<textarea class="form-control" required></textarea>
-						</div>
-						<div class="form-group">
-							<label>Phone</label>
-							<input type="text" class="form-control" required>
-						</div>
+						{% for key, value in insert_column_list.items() %}
+							{% if key not in pk_column_list  %}
+								<label>{{ key }}</label>
+								{% if "int" in value["type"] or "double" in value["type"] or "num" in value["type"]  %}
+								<input type="number" class="form-control" name="{{ key }}">
+								{% elif "date" in value["type"]  %}
+								<input type="date" class="form-control" name="{{ key }}">
+								{% elif "timestamp" in value["type"]  %}
+								<input type="datetime-local" class="form-control" name="{{ key }}">
+								{% elif "char" in value["type"] and value["length"] > 500 %}
+								<textarea class="form-control" name="{{ key }}"></textarea>
+								{% else %}
+								<input type="text" class="form-control" name="{{ key }}">
+								{% endif %}
+							{% endif %}
+						{% endfor %}
+						<br/>
+						<p>Only modify fields which needs to be updated!</p>
+						<p class="text-warning"><small>All remaining fields will be not be modified.</small></p>
 					</div>
 					<div class="modal-footer">
 						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
@@ -426,7 +439,7 @@ $(document).ready(function(){
 			<div class="modal-content">
 				<form action="{{ url_for('api_drop', table_name=table_name, page_num=page_num) }}" method="post">
 					<div class="modal-header">
-						<h4 class="modal-title">Delete Employee</h4>
+						<h4 class="modal-title">Delete {{ table_name }}</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">

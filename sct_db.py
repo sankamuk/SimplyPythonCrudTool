@@ -12,7 +12,8 @@ from sct_query import (
     SCT_QUERY_POSTGRES_GET_COLMN_DETAIL,
     SCT_QUERY_POSTGRES_GET_PK_DETAIL,
     SCT_QUERY_POSTGRES_INSERT_ROW,
-    SCT_QUERY_POSTGRES_DROP_ROW
+    SCT_QUERY_POSTGRES_DROP_ROW,
+    SCT_QUERY_POSTGRES_UPDATE_ROW
 )
 
 
@@ -111,9 +112,11 @@ class DbBackEnd:
                 "length": cd[4]
             }
             if col_nm in meta_dict["pk_columns"] and cd[5] and "nextval" in cd[5]:
-                print("Primary key auto-generate column {}".format(col_nm))
+                # print("Primary key auto-generate column {}".format(col_nm))
+                pass
             elif cd[2] and "not updatable" in (cd[2]).lower():
-                print("Non updatable column {}".format(col_nm))
+                # print("Non updatable column {}".format(col_nm))
+                pass
             else:
                 meta_dict["insert"][col_nm] = {
                     "type": cd[3],
@@ -122,12 +125,13 @@ class DbBackEnd:
                 }
         return meta_dict
 
-    def get_table_info(self, table: str, batch: int = 1) -> dict:
+    def get_table_info(self, table: str, batch: int = 1, page_size: int = 3) -> dict:
         """
         Table metadata
 
         :param table: Table name
         :param batch: Row batch, where each batch will be of size 50 at least
+        :param page_size: Max record per page
         :return: Metadata dictionary
         """
         meta_dict = dict()
@@ -148,8 +152,8 @@ class DbBackEnd:
         meta_dict["table_count"] = int(curs.fetchone()[0])
 
         # Get rows in batches of 50 records
-        batch_num = (batch if 0 < batch < ceil(meta_dict["table_count"] / 3) else
-                     1 if batch < 1 else ceil(meta_dict["table_count"] / 3))
+        batch_num = (batch if 0 < batch < ceil(meta_dict["table_count"] / page_size) else
+                     1 if batch < 1 else ceil(meta_dict["table_count"] / page_size))
 
         curs.execute(
             """
@@ -158,8 +162,8 @@ class DbBackEnd:
                 ",".join(meta_dict["view_columns"].keys()),
                 table,
                 ",".join(meta_dict["pk_columns"]),
-                (batch_num - 1) * 3,
-                3
+                (batch_num - 1) * page_size,
+                page_size
             )
         )
         meta_dict["table_data"] = tuple_to_dict([k for k in meta_dict["view_columns"].keys()], curs.fetchall())
@@ -187,7 +191,7 @@ class DbBackEnd:
 
     def add_table_record(self, table: str, **kwargs):
         """
-        Append to table
+        Add row to table
 
         :param table: Table name
         :param kwargs: List of column values of new record
@@ -218,7 +222,7 @@ class DbBackEnd:
 
     def drop_table_record(self, table: str, **kwargs):
         """
-        Append to table
+        Drop row from table
 
         :param table: Table name
         :param kwargs: List of column values of new record
@@ -250,8 +254,58 @@ class DbBackEnd:
             table,
             " and ".join(qry_args)
         )
+        print(drop_qry)
 
         # Trigger insert
         curs = self.get_cursor
         curs.execute(drop_qry)
+        self.db_connection.commit()
+
+    def edit_table_record(self, table: str, **kwargs):
+        """
+        Edit row to table
+
+        :param table: Table name
+        :param kwargs: List of column values of new record
+        :return: None
+        """
+        # Query preparation
+        table_details = self.get_table_columns(table)
+
+        # Where Clause
+        qry_args = []
+        if len(table_details["pk_columns"]):
+            for col_nm in table_details["pk_columns"]:
+                if (("int" in table_details["view"][col_nm]["type"] and
+                     "point" not in table_details["view"][col_nm]["type"]) or
+                        ("double" in table_details["view"][col_nm]["type"] or
+                         "numeric" in table_details["view"][col_nm]["type"])):
+                    qry_args.append("{}={}".format(col_nm, kwargs[col_nm]))
+                else:
+                    qry_args.append("{}='{}'".format(col_nm, kwargs[col_nm]))
+        else:
+            return
+
+        # Set Directive
+        set_args = []
+        for col in table_details["insert"].keys():
+            if col not in table_details["pk_columns"]:
+                if (("int" in table_details["insert"][col]["type"] and
+                     "point" not in table_details["insert"][col]["type"]) or
+                        ("double" in table_details["insert"][col]["type"] or
+                         "numeric" in table_details["insert"][col]["type"])):
+                    set_args.append("{}={}".format(col, kwargs[col]))
+                else:
+                    set_args.append("{}='{}'".format(col, kwargs[col]))
+
+        edit_qry = SCT_QUERY_POSTGRES_UPDATE_ROW.format(
+            table,
+            ", ".join(set_args),
+            " and ".join(qry_args)
+        )
+        print(edit_qry)
+
+        # Trigger insert
+        curs = self.get_cursor
+        curs.execute(edit_qry)
         self.db_connection.commit()
