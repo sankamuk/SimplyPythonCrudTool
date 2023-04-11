@@ -25,6 +25,7 @@ class DbBackEnd:
 
     def __init__(self,
                  database: str = "default",
+                 schema: str = "public",
                  user: str = "postgres",
                  password: str = "postgres",
                  host: str = "localhost",
@@ -33,16 +34,19 @@ class DbBackEnd:
         DbBackEnd constructor
 
         :param database: DB name
+        :param schema: DB Schema
         :param user: DB User
         :param password: DB User Password
         :param host: DB Hostname
         :param port: DB Port
         """
+        self._schema = schema
         self._con = psycopg2.connect(database=database,
                                      user=user,
                                      password=password,
                                      host=host,
-                                     port=port)
+                                     port=port,
+                                     options="-c search_path={}".format(schema))
 
     @property
     def db_connection(self):
@@ -62,17 +66,18 @@ class DbBackEnd:
         """
         return self.db_connection.cursor()
 
-    def get_table_list(self) -> list:
+    def get_table_list(self, schema: str = "public") -> list:
         """
         Return list of table name in DB
 
+        :param schema: DB Schema
         :return: List of Tables
         """
         curs = self.get_cursor
         curs.execute(
             """
-            SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'
-            """
+            SELECT table_name FROM information_schema.tables WHERE table_schema = '{}'
+            """.format(schema)
         )
         return tuple_to_list(curs.fetchall())
 
@@ -107,7 +112,7 @@ class DbBackEnd:
             }
             if col_nm in meta_dict["pk_columns"] and cd[5] and "nextval" in cd[5]:
                 print("Primary key auto-generate column {}".format(col_nm))
-            elif cd[2] and "not updatable" in cd[2]:
+            elif cd[2] and "not updatable" in (cd[2]).lower():
                 print("Non updatable column {}".format(col_nm))
             else:
                 meta_dict["insert"][col_nm] = {
@@ -137,7 +142,7 @@ class DbBackEnd:
         # Get Table Count
         curs.execute(
             """
-            SELECT count(*) FROM public.{}
+            SELECT count(*) FROM {}
             """.format(table)
         )
         meta_dict["table_count"] = int(curs.fetchone()[0])
@@ -148,7 +153,7 @@ class DbBackEnd:
 
         curs.execute(
             """
-            SELECT {} FROM public.{} ORDER BY {} OFFSET {} LIMIT {}
+            SELECT {} FROM {} ORDER BY {} OFFSET {} LIMIT {}
             """.format(
                 ",".join(meta_dict["view_columns"].keys()),
                 table,

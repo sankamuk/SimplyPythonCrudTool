@@ -31,6 +31,7 @@ create table public.employees (
 	birth_day VARCHAR (20)
 );
 
+COMMENT ON COLUMN public.employees.birth_day is 'Not Updatable: Birth day field';
 
 -- Populate dependent column (birth_day) for Employees table
 

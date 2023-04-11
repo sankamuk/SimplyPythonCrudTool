@@ -1,14 +1,26 @@
+import os
 from flask import Flask, render_template, abort, jsonify, request, redirect, url_for
 from math import ceil
 from sct_db import DbBackEnd
 
+# Read Environment
+sct_db_name = os.environ.get("SCT_DB_NAME", "default")
+sct_db_schema = os.environ.get("SCT_DB_SCHEMA", "public")
+sct_db_user = os.environ.get("SCT_DB_USER", "postgres")
+sct_db_host = os.environ.get("SCT_DB_HOST", "localhost")
+sct_db_port = os.environ.get("SCT_DB_PORT", "5432")
+sct_db_pwd = os.environ["SCT_DB_PWD"]
+
+# Create Application
 app = Flask(__name__)
-db = DbBackEnd("employee", "postgres", "admin", "192.168.56.101", "5432")
+
+# Init Database
+db = DbBackEnd(sct_db_name, sct_db_schema, sct_db_user, sct_db_pwd, sct_db_host, sct_db_port)
 
 
 @app.route("/data")
 def data():
-    table_list = db.get_table_list()
+    table_list = db.get_table_list(sct_db_schema)
     table_name = request.args.get("table_name") if request.args.get("table_name") else table_list[0]
     page_num = int(request.args.get("page_num")) if request.args.get("page_num") else 1
     table_details = db.get_table_info(table_name, page_num)
