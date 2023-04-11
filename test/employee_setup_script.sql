@@ -31,6 +31,7 @@ create table public.employees (
 	birth_day VARCHAR (20)
 );
 
+COMMENT ON COLUMN public.employees.birth_day is 'Not Updatable: Birth day field';
 
 -- Populate dependent column (birth_day) for Employees table
 
@@ -63,7 +64,14 @@ insert into public.companies(company_id, company_name, company_city) values ('AC
 insert into public.departments(department_id, department_type) values ('ENG_HWD', 'Hardware Engineering'), ('ENG_SW', 'Software Engineering'), ('HR', 'Human Resource'), ('MGMT', 'Manager');
 
 -- Insert Employees
-insert into public.employees(name, email, department, company, dob) values ('san', 'san@gmail.com', 'ENG_SW', 'IBM_KOL', '1962-04-20'), ('jew', 'jew@gmail.com', 'MGMT', 'ACN_KOL', '1960-01-10');
+insert into public.employees(name, email, department, company, dob) values 	('san', 'san@gmail.com', 'ENG_SW', 'IBM_KOL', '1962-04-20'), 
+																			('jew', 'jew@gmail.com', 'MGMT', 'ACN_KOL', '1960-01-10'),
+																			('ami', 'ami@gmail.com', 'MGMT', 'TCS_BNG', '1959-06-18'),
+																			('dab', 'dab@hotmail.com', 'ENG_HWD', 'TCS_BNG', '1965-03-12'),
+																			('jad', 'jad@space.com', 'ENG_SW', 'IBM_KOL', '1960-05-22'), 
+																			('kun', 'kun@gmail.com', 'ENG_SW', 'IBM_KOL', '1968-08-17'),
+																			('xun', 'xun@gmail.com', 'ENG_SW', 'IBM_KOL', '1956-09-02'),
+																			('kom', 'kom@hotmail.com', 'ENG_HWD', 'TCS_BNG', '1965-05-10');
 
 
 --------------------------------------------------------------------------------------
