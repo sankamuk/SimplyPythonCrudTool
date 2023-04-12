@@ -15,11 +15,22 @@ sct_db_pwd = os.environ["SCT_DB_PWD"]
 # # UI Related
 sct_ui_pagesize = int(os.environ.get("SCT_UI_PAGESIZE", "3"))
 
+# # Audit Related
+sct_audit_type = os.environ.get("SCT_AUDIT_TYPE", "db")
+sct_audit_container = os.environ.get("SCT_AUDIT_CONTAINER", "sct_audits")
+sct_audit_schema = os.environ.get("SCT_AUDIT_SCHEMA", "public")
+
+
 # Create Application
 app = Flask(__name__)
 
 # Init Database
 db = DbBackEnd(sct_db_name, sct_db_schema, sct_db_user, sct_db_pwd, sct_db_host, sct_db_port)
+
+
+@app.route("/")
+def home():
+    return redirect(url_for('data'))
 
 
 @app.route("/data")
@@ -82,6 +93,12 @@ def api_edit():
     for col in table_details["pk_columns"]:
         parm_dict[col] = rec_to_edit[col]
     db.edit_table_record(table_name, **parm_dict)
+    return redirect(url_for('data', table_name=table_name))
+
+
+@app.route("/api/upload", methods=["POST"])
+def api_upload():
+    table_name = request.args.get("table_name")
     return redirect(url_for('data', table_name=table_name))
 
 
