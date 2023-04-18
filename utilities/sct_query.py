@@ -70,4 +70,13 @@ SCT_QUERY_POSTGRES_UPDATE_ROW = """
 UPDATE {} SET {} WHERE {}
 """
 
+SCT_QUERY_POSTGRES_AUDIT_GET = """
+SELECT audit_user, audit_time, operation_performed, table_name, operation_metadata FROM {}
+ORDER BY audit_id OFFSET {} LIMIT {}
+"""
 
+SCT_QUERY_POSTGRES_AUDIT_PUT = """
+INSERT INTO {}(audit_user, operation_performed, table_name, operation_metadata) VALUES (
+    '{}', '{}', '{}', '{}'
+)
+"""

@@ -1,19 +1,23 @@
 """
     sct_db.py
     -------
-    This module controls backend database interaction
+    This module controls SCT Tool specific database interaction
 """
+import json
+
 import psycopg2
 from math import ceil
-from sct_utils import tuple_to_dict, tuple_to_list
-from sct_query import (
+from utilities.sct_utils import tuple_to_dict, tuple_to_list
+from utilities.sct_query import (
     SCT_QUERY_POSTGRES_GET_FK_DETAIL,
     SCT_QUERY_POSTGRES_GET_FK_LOOKUP,
     SCT_QUERY_POSTGRES_GET_COLMN_DETAIL,
     SCT_QUERY_POSTGRES_GET_PK_DETAIL,
     SCT_QUERY_POSTGRES_INSERT_ROW,
     SCT_QUERY_POSTGRES_DROP_ROW,
-    SCT_QUERY_POSTGRES_UPDATE_ROW
+    SCT_QUERY_POSTGRES_UPDATE_ROW,
+    SCT_QUERY_POSTGRES_AUDIT_GET,
+    SCT_QUERY_POSTGRES_AUDIT_PUT
 )
 
 
@@ -26,7 +30,7 @@ class DbBackEnd:
 
     def __init__(self,
                  database: str = "default",
-                 schema: str = "public",
+                 schema=None,
                  user: str = "postgres",
                  password: str = "postgres",
                  host: str = "localhost",
@@ -41,13 +45,24 @@ class DbBackEnd:
         :param host: DB Hostname
         :param port: DB Port
         """
-        self._schema = schema
+        if schema is None:
+            schema = ["public"]
         self._con = psycopg2.connect(database=database,
                                      user=user,
                                      password=password,
                                      host=host,
                                      port=port,
-                                     options="-c search_path={}".format(schema))
+                                     options="-c search_path={}".format(",".join(schema)))
+
+    def finalize(self, e=None):
+        """
+        Closes a DbBackEnd
+
+        :return: None
+        """
+        print("Closing DB Connection.")
+        if self.db_connection:
+            self.db_connection.close()
 
     @property
     def db_connection(self):
@@ -308,4 +323,60 @@ class DbBackEnd:
         # Trigger insert
         curs = self.get_cursor
         curs.execute(edit_qry)
+        self.db_connection.commit()
+
+    def get_audits(self, audit_table: str, batch: int = 1, page_size: int = 3) -> dict:
+        """
+        Get Audits
+
+        :param audit_table: Audit table name
+        :param batch: Row batch, where each batch will be of size 50 at least
+        :param page_size: Max record per page
+        :return: Audit data
+        """
+        curs = self.get_cursor
+        meta_dict = dict()
+
+        # Get Table Count
+        curs.execute(
+            """
+            SELECT count(*) FROM {}
+            """.format(audit_table)
+        )
+        meta_dict["audits_count"] = int(curs.fetchone()[0])
+
+        # Get rows in batches of 50 records
+        batch_num = (batch if 0 < batch < ceil(meta_dict["audits_count"] / page_size) else
+                     1 if batch < 1 else ceil(meta_dict["audits_count"] / page_size))
+
+        adt_qry = SCT_QUERY_POSTGRES_AUDIT_GET.format(audit_table, (batch_num - 1) * page_size, page_size)
+        curs.execute(adt_qry)
+
+        audit_columns = ["audit_user", "audit_time", "operation_performed", "table_name", "operation_metadata"]
+        meta_dict["audits_data"] = tuple_to_dict(audit_columns, curs.fetchall())
+
+        return meta_dict
+
+    def add_audit(self, audit_table: str, audit_user: str, operation_performed: str,
+                  table_name: str, operation_metadata: str):
+        """
+        Insert a Audit record
+
+        :param audit_table: Audit table name
+        :param audit_user: Audit user
+        :param operation_performed: Audit operation
+        :param table_name: Table impacted
+        :param operation_metadata: Operation detail
+        :return: None
+        """
+        curs = self.get_cursor
+        curs.execute(
+            SCT_QUERY_POSTGRES_AUDIT_PUT.format(
+                audit_table,
+                audit_user if audit_user else "ANONYMOUS",
+                operation_performed,
+                table_name,
+                json.dumps(operation_metadata)
+            )
+        )
         self.db_connection.commit()

@@ -4,6 +4,17 @@
 -- DEFINITIONS
 --------------------------------------------------------------------------------------
 
+-- Create Audit Table
+
+create table governance.sct_audits (
+	audit_id serial PRIMARY KEY,
+	audit_user VARCHAR (100) not null,
+	audit_time timestamp NOT NULL DEFAULT NOW(),
+    operation_performed VARCHAR (100) not null,
+    table_name VARCHAR (100) not null,
+    operation_metadata VARCHAR (5000)
+);
+
 -- Create Companies Table
 
 create table public.companies (
