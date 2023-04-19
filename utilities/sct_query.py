@@ -71,12 +71,16 @@ UPDATE {} SET {} WHERE {}
 """
 
 SCT_QUERY_POSTGRES_AUDIT_GET = """
-SELECT audit_user, audit_time, operation_performed, table_name, operation_metadata FROM {}
+SELECT audit_user, audit_time, operation_performed, table_name, operation_status, operation_metadata FROM {}
 ORDER BY audit_id OFFSET {} LIMIT {}
 """
 
 SCT_QUERY_POSTGRES_AUDIT_PUT = """
-INSERT INTO {}(audit_user, operation_performed, table_name, operation_metadata) VALUES (
-    '{}', '{}', '{}', '{}'
+INSERT INTO {0}(operation_performed, table_name, operation_status, audit_user, operation_metadata) VALUES (
+    '{1}', '{2}', '{3}', '{4}', '{5}'
 )
+"""
+
+SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD = """
+SELECT table_name, operation_status, operation_metadata FROM {} WHERE operation_performed = 'BULK_UPLOAD'
 """
