@@ -40,6 +40,7 @@ def sct_scheduled_bulk_loader(app, db):
             })
 
     send_mail(app,
+              mail_type="job",
               operation_performed="BULK_UPLOAD",
               table_name=",".join(table_list),
               audit_user="SYSTEM",

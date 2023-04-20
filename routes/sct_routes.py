@@ -12,6 +12,7 @@ from flask_login import current_user
 
 from utilities.sct_env import *
 from utilities.sct_security import get_user_role
+from utilities.sct_mail import send_mail
 
 
 def define_routes(app, db, uploads):
@@ -326,3 +327,25 @@ def define_routes(app, db, uploads):
             "total_rows": len(download_data)
         })
         return flask_excel.make_response_from_array(download_data, file_type="csv", status=200, file_name=file_name)
+
+    @app.route("/register", methods=["GET"])
+    def register():
+        """
+        Handles registration request
+
+        :return: Table Page <HTML>
+        """
+        app.logger.info("Registration request")
+        user_email = request.args.get("user_email")
+        user_name = request.args.get("user_name")
+        user_permission = request.args.get("user_permission")
+        app.logger.info("Registration request made by {} with email {} for access type {}".format(
+            user_name, user_email, user_permission))
+
+        send_mail(app,
+                  mail_type="register",
+                  user_email=user_email,
+                  user_name=user_name,
+                  user_permission=user_permission)
+
+        return redirect(url_for('data'))

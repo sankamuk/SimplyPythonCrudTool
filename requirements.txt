@@ -7,3 +7,4 @@ Flask-Excel
 Flask-Reuploaded
 Flask-APScheduler
 Flask-Mail
+jinja2
