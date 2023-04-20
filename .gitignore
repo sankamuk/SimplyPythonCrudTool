@@ -68,9 +68,6 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-
 # PyBuilder
 target/
 
@@ -130,3 +127,9 @@ dmypy.json
 
 # Pycharm Local
 .idea/
+
+# Sphinx documentation
+docs/_build/doctrees/
+docs/_build/html/_sources
+docs/_static
+docs/_templates

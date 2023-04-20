@@ -8,3 +8,4 @@ Flask-Reuploaded
 Flask-APScheduler
 Flask-Mail
 jinja2
+Sphinx
