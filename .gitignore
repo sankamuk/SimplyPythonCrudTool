@@ -129,7 +129,9 @@ dmypy.json
 .idea/
 
 # Sphinx documentation
-docs/_build/doctrees/
-docs/_build/html/_sources
-docs/_static
-docs/_templates
+sphinx/_build/doctrees/
+sphinx/_build/html/_sources
+sphinx/_static
+sphinx/_templates
+docs/.doctrees/
+docs/_sources
