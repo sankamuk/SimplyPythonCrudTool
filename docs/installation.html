@@ -39,6 +39,59 @@
 <li><p><a class="reference external" href="custom_installation.html">Custom</a></p></li>
 </ul>
 <p>Below we only discuss the quick start local execution option.</p>
+<section id="step-by-step-guide-to-local-installation">
+<h2>Step by Step Guide to Local Installation<a class="headerlink" href="#step-by-step-guide-to-local-installation" title="Permalink to this heading">¶</a></h2>
+<section id="install-python">
+<h3>Install Python<a class="headerlink" href="#install-python" title="Permalink to this heading">¶</a></h3>
+<p>Depends on your OS build all detail can be found in <a class="reference external" href="https://wiki.python.org/moin/BeginnersGuide/Download">GUIDE</a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This application is build with <strong>Python version 3</strong>.</p>
+</div>
+</section>
+<section id="setup-a-virtual-environment">
+<h3>Setup a Virtual Environment<a class="headerlink" href="#setup-a-virtual-environment" title="Permalink to this heading">¶</a></h3>
+<p>Though its not mandatory to use virtual environment but its always advisable, find the <a class="reference external" href="https://docs.python.org/3/library/venv.html">GUIDE</a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Before you proceed, do not forget to initiate your <strong>virtual environment</strong> .</p>
+</div>
+</section>
+<section id="download-application">
+<h3>Download Application<a class="headerlink" href="#download-application" title="Permalink to this heading">¶</a></h3>
+<p>Though this can be achieved in many way the simplest way is CLI using <a class="reference external" href="https://git-scm.com/">GIT</a>. Below is the command for the same:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/sankamuk/SimplyPythonCrudTool.git
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>One can also simple download the application as a zip from GitHub repo.</p>
+</div>
+</section>
+<section id="install-dependencies">
+<h3>Install Dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this heading">¶</a></h3>
+<p>With you in virtual environment, all you need to do for dependency installation is below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m pip install -r requirements.txt
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You should be inside the application folder with initiated virtual environment.</p>
+</div>
+</section>
+<section id="execute-application">
+<h3>Execute Application<a class="headerlink" href="#execute-application" title="Permalink to this heading">¶</a></h3>
+<p>Now its time of run the application, and for that you do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python app.py
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Now your application will be available locally <a class="reference external" href="http://localhost:5000/">AT</a> . But before that you need to configure for any meaningful usage.</p>
+</div>
+<p>Though this could only be used for testing, nevertheless it is quick and easy method. Though our recommendation should be using Docker.</p>
+</section>
+</section>
 </section>
 
 
