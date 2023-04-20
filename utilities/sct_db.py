@@ -4,7 +4,7 @@
     This module controls SCT Tool specific database interaction
 """
 import json
-
+import csv
 import psycopg2
 from math import ceil
 from utilities.sct_utils import tuple_to_dict, tuple_to_list
@@ -17,7 +17,8 @@ from utilities.sct_query import (
     SCT_QUERY_POSTGRES_DROP_ROW,
     SCT_QUERY_POSTGRES_UPDATE_ROW,
     SCT_QUERY_POSTGRES_AUDIT_GET,
-    SCT_QUERY_POSTGRES_AUDIT_PUT
+    SCT_QUERY_POSTGRES_AUDIT_PUT,
+    SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD
 )
 
 
@@ -97,16 +98,43 @@ class DbBackEnd:
         )
         return tuple_to_list(curs.fetchall())
 
-    def get_table_columns(self, table: str) -> dict:
+    def get_table_data(self, table: str, project_list: list, order_list: list, limit: int, offset: int = 0):
+        """
+        Fetch data for a table
+
+        :param table: Table name
+        :param project_list: List of columns to project
+        :param order_list: List of columns to order data by
+        :param limit: Max rows fetched
+        :param offset: Row batch, where each batch will be of size 50 at least
+        :return: List of rows
+        """
+        curs = self.get_cursor
+        curs.execute(
+            """
+            SELECT {} FROM {} ORDER BY {} OFFSET {} LIMIT {}
+            """.format(
+                ",".join(project_list),
+                table,
+                ",".join(order_list),
+                offset,
+                limit
+            )
+        )
+        return curs.fetchall()
+
+    def get_table_columns(self, table: str, load_fk_data: bool = False) -> dict:
         """
         Column list for a table
 
         :param table: Table name
+        :param load_fk_data: Whether to load FK column data for lookup
         :return: Metadata dictionary
         """
         meta_dict = dict()
         meta_dict["view"] = dict()
         meta_dict["insert"] = dict()
+        meta_dict["fk_columns"] = dict()
         curs = self.get_cursor
 
         # Get Table Primary Keys
@@ -138,6 +166,25 @@ class DbBackEnd:
                     "description": cd[2],
                     "length": cd[4]
                 }
+
+            # Get Table Foreign Keys
+            curs.execute(SCT_QUERY_POSTGRES_GET_FK_DETAIL)
+            for fkd in curs.fetchall():
+                if fkd[2] == table:
+                    meta_dict["fk_columns"][fkd[3]] = {
+                        "table": fkd[4],
+                        "column": fkd[5],
+                        "data": []
+                    }
+            if load_fk_data:
+                for fk in meta_dict["fk_columns"]:
+                    curs.execute(
+                        SCT_QUERY_POSTGRES_GET_FK_LOOKUP.format(
+                            meta_dict["fk_columns"][fk].get("column"),
+                            meta_dict["fk_columns"][fk].get("table")
+                        )
+                    )
+                    meta_dict["fk_columns"][fk]["data"] = tuple_to_list(curs.fetchall())
         return meta_dict
 
     def get_table_info(self, table: str, batch: int = 1, page_size: int = 3) -> dict:
@@ -153,10 +200,11 @@ class DbBackEnd:
         curs = self.get_cursor
 
         # Get Column Details
-        column_detail = self.get_table_columns(table)
+        column_detail = self.get_table_columns(table, True)
         meta_dict["view_columns"] = column_detail["view"]
         meta_dict["insert_columns"] = column_detail["insert"]
         meta_dict["pk_columns"] = column_detail["pk_columns"]
+        meta_dict["fk_columns"] = column_detail["fk_columns"]
 
         # Get Table Count
         curs.execute(
@@ -170,37 +218,13 @@ class DbBackEnd:
         batch_num = (batch if 0 < batch < ceil(meta_dict["table_count"] / page_size) else
                      1 if batch < 1 else ceil(meta_dict["table_count"] / page_size))
 
-        curs.execute(
-            """
-            SELECT {} FROM {} ORDER BY {} OFFSET {} LIMIT {}
-            """.format(
-                ",".join(meta_dict["view_columns"].keys()),
-                table,
-                ",".join(meta_dict["pk_columns"]),
-                (batch_num - 1) * page_size,
-                page_size
-            )
-        )
-        meta_dict["table_data"] = tuple_to_dict([k for k in meta_dict["view_columns"].keys()], curs.fetchall())
-
-        # Get Table Foreign Keys
-        meta_dict["fk_columns"] = dict()
-        curs.execute(SCT_QUERY_POSTGRES_GET_FK_DETAIL)
-        for fkd in curs.fetchall():
-            if fkd[2] == table:
-                meta_dict["fk_columns"][fkd[3]] = {
-                    "table": fkd[4],
-                    "column": fkd[5],
-                    "data": []
-                }
-        for fk in meta_dict["fk_columns"]:
-            curs.execute(
-                SCT_QUERY_POSTGRES_GET_FK_LOOKUP.format(
-                    meta_dict["fk_columns"][fk].get("column"),
-                    meta_dict["fk_columns"][fk].get("table")
-                )
-            )
-            meta_dict["fk_columns"][fk]["data"] = tuple_to_list(curs.fetchall())
+        # Get table data
+        table_data = self.get_table_data(table,
+                                         meta_dict["view_columns"].keys(),
+                                         meta_dict["pk_columns"],
+                                         page_size,
+                                         (batch_num - 1) * page_size)
+        meta_dict["table_data"] = tuple_to_dict([k for k in meta_dict["view_columns"].keys()], table_data)
 
         return meta_dict
 
@@ -352,17 +376,19 @@ class DbBackEnd:
         adt_qry = SCT_QUERY_POSTGRES_AUDIT_GET.format(audit_table, (batch_num - 1) * page_size, page_size)
         curs.execute(adt_qry)
 
-        audit_columns = ["audit_user", "audit_time", "operation_performed", "table_name", "operation_metadata"]
+        audit_columns = ["audit_user", "audit_time", "operation_performed",
+                         "table_name", "operation_status", "operation_metadata"]
         meta_dict["audits_data"] = tuple_to_dict(audit_columns, curs.fetchall())
 
         return meta_dict
 
-    def add_audit(self, audit_table: str, audit_user: str, operation_performed: str,
+    def add_audit(self, audit_table: str, status: str, audit_user: str, operation_performed: str,
                   table_name: str, operation_metadata: str):
         """
         Insert a Audit record
 
         :param audit_table: Audit table name
+        :param status: Audit operation status
         :param audit_user: Audit user
         :param operation_performed: Audit operation
         :param table_name: Table impacted
@@ -370,13 +396,99 @@ class DbBackEnd:
         :return: None
         """
         curs = self.get_cursor
-        curs.execute(
-            SCT_QUERY_POSTGRES_AUDIT_PUT.format(
+        query_str = SCT_QUERY_POSTGRES_AUDIT_PUT.format(
                 audit_table,
                 audit_user if audit_user else "ANONYMOUS",
                 operation_performed,
                 table_name,
+                status,
                 json.dumps(operation_metadata)
             )
-        )
+        print(query_str)
+        curs.execute(query_str)
         self.db_connection.commit()
+
+    def get_pending_bulk_loading(self, audit_table, max_failure):
+        """
+        List of files pending for processing
+
+        :param audit_table: Audit table name
+        :param max_failure: Max number of failure before we discard a file
+        :return: dictionary with keys for table name and file to load
+        """
+        # Fetch data
+        curs = self.get_cursor
+        curs.execute(
+            SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD.format(
+                audit_table
+            )
+        )
+
+        # Group data
+        all_records = dict()
+        for rec in curs.fetchall():
+            table_name, file_name, action_name = (rec[0], json.loads(rec[2])["file_name"], rec[1])
+            if table_name not in all_records:
+                all_records[table_name] = dict()
+            if file_name not in all_records[table_name]:
+                all_records[table_name][file_name] = []
+            (all_records[table_name][file_name]).append(action_name)
+
+        # Filter out files that need to be considered
+        result_dict = dict()
+        for tbl in all_records.keys():
+            for fl in all_records[tbl]:
+                if ("SUCCESS" not in all_records[tbl][fl] and
+                        len([st for st in all_records[tbl][fl] if st == "FAILED"]) <= int(max_failure)):
+                    if tbl not in result_dict:
+                        result_dict[tbl] = [fl]
+                    else:
+                        result_dict[tbl].append(fl)
+
+        return result_dict
+
+    def bulk_load_table_records(self, table: str, file_path: str):
+        """
+        Add row to table
+
+        :param table: Table name
+        :param file_path: File name to load table from
+        :return: None
+        """
+        total_rec = 0
+        curs = self.get_cursor
+        table_details = self.get_table_columns(table)
+
+        # Read in CSV
+        with open(file_path, mode='r')as file:
+            csv_file = csv.reader(file)
+            column_list = []
+            for i, row in enumerate(csv_file):
+                if not i:
+                    column_list = row
+                else:
+                    qry_args = []
+                    for c, col in enumerate(column_list):
+                        if (("int" in table_details["insert"][col]["type"] and
+                             "point" not in table_details["insert"][col]["type"]) or
+                                ("double" in table_details["insert"][col]["type"] or
+                                 "numeric" in table_details["insert"][col]["type"])):
+                            qry_args.append("{}".format(row[c]))
+                        else:
+                            qry_args.append("'{}'".format(row[c]))
+                    insert_qry = SCT_QUERY_POSTGRES_INSERT_ROW.format(
+                        table,
+                        ",".join(column_list),
+                        ",".join(qry_args)
+                    )
+                    print(insert_qry)
+                    curs.execute(insert_qry)
+                    total_rec = total_rec + 1
+
+        self.db_connection.commit()
+        return total_rec
+
+
+
+
+

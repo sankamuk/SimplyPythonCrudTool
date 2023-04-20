@@ -424,6 +424,7 @@ $(document).ready(function(){
 								<th>Time</th>
 								<th>Operation</th>
 								<th>Table</th>
+								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -434,6 +435,7 @@ $(document).ready(function(){
 								<td>{{ dp.audit_time }}</td>
 								<td>{{ dp.operation_performed }}</td>
 								<td>{{ dp.table_name }}</td>
+								<td>{{ dp.operation_status }}</td>
 								<td>
 									<a href="#auditModal" class="edit" data-toggle="modal" data-id="{{ loop.index0 }}" data-rec="{{ dp }}"><i class="material-icons far" data-toggle="tooltip" title="Detail">&#xf06e;</i></a>
 								</td>

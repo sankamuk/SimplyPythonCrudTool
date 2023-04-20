@@ -12,6 +12,7 @@ create table governance.sct_audits (
 	audit_time timestamp NOT NULL DEFAULT NOW(),
     operation_performed VARCHAR (100) not null,
     table_name VARCHAR (100) not null,
+    operation_status VARCHAR (15) not null,
     operation_metadata VARCHAR (5000)
 );
 

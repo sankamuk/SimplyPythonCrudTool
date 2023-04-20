@@ -6,7 +6,10 @@
 
 ## Overview
 
-Simple Flask based DB CRUD tool which allows configuration driven governance. 
+Simple Flask based DB CRUD Web Application with an intuitive UI and so much more.
+
+Check everything in the [DOCS]() page.
+
 
 ***Features***
 
@@ -15,12 +18,13 @@ Simple Flask based DB CRUD tool which allows configuration driven governance.
 - Intuitive UI for ADD, UPDATE & DELETE operations.
 - Dynamic form for ADD, UPDATE operations based on table schema.
 - Lookup for Foreign Key population in ADD, UPDATE operations. [TO DO]
-- Batch insertion support using CSV. [IN PROGRESS]
-- Download/Backup support using CSV. [IN PROGRESS]
+- Batch insertion support using CSV, handled by asynchronous backend task.
+- Download/Backup support using CSV.
 - Track & Audit all operation and also changes in tables in DB or local files.
-- Authentication support.
+- Authentication and new user registration support.
 - Role based authorization support.
-- Allow column based search with column list dynamically generated. [TO DO]
+- Notification support with email.
+- Allow column based search with column list dynamically generated.  [TO DO]
 
 
 ## Prerequisite

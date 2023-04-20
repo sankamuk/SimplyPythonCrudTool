@@ -449,7 +449,9 @@ $(document).ready(function(){
 					<div class="clearfix">
 						<div class="row">
 							<div class="col-xs-4">
-								<button type="button" class="btn btn-success float-left">Download</button>
+								<button type="button" class="btn btn-success float-left">
+									<a href="{{ url_for('api_download', table_name=table_name) }}" style="color:inherit">Download</a>
+								</button>
 								{% if logged_user_role == "ADMIN" or logged_user_role == "OPERATOR" %}
 									<button type="button" class="btn btn-danger float-left" data-toggle="modal" data-target="#uploadModal">Upload</button>
 								{% endif %}
@@ -582,7 +584,7 @@ $(document).ready(function(){
 	<div id="uploadModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form action="{{ url_for('api_upload', table_name=table_name, page_num=page_num) }}" method="post">
+				<form action="{{ url_for('api_upload', table_name=table_name) }}" method="post" enctype="multipart/form-data">
 					<div class="modal-header">
 						<h4 class="modal-title">Upload  {{ table_name }}</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -590,19 +592,21 @@ $(document).ready(function(){
 					<div class="modal-body">
 						<span class="control-fileupload">
 							<label for="file">Choose local file to upload:</label>
-							<input type="file" id="file">
+							<input type="file" id="file" name="file">
 						</span>
 						<br/>
 						<p>Supports only <b>CSV</b></p>
 						<br/>
 						<br/>
-						<button type="button" class="btn btn-default float-left">Download</button>
+						<button type="button" class="btn btn-default float-left">
+							<a href="{{ url_for('api_download', table_name=table_name, with_data=0) }}" style="color:inherit">Download</a>
+						</button>
 						<br/>
-						<p class="text-warning"><small>Download <b>sample csv</b> to identify fields.</small></p>
+						<p class="text-warning"><small>Download <b>sample CSV</b> to identify fields.</small></p>
 					</div>
 					<div class="modal-footer">
 						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-danger" value="Delete">
+						<input type="submit" class="btn btn-danger" value="Upload">
 					</div>
 				</form>
 			</div>

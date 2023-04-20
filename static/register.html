@@ -88,29 +88,29 @@
     </style>
 </head>
 <body>
-    <form>
-  <label>
-    <p class="label-txt">Enter your email:</p>
-    <input type="text" class="input">
-    <div class="line-box">
-      <div class="line"></div>
-    </div>
-  </label>
-  <label>
-    <p class="label-txt">Enter your name:</p>
-    <input type="text" class="input">
-    <div class="line-box">
-      <div class="line"></div>
-    </div>
-  </label>
-  <label>
-    <p class="label-txt">Enter access requested (ADMIN/OPERATOR/VIEWER):</p>
-    <input type="text" class="input">
-    <div class="line-box">
-      <div class="line"></div>
-    </div>
-  </label>
-  <button type="submit">submit</button>
-</form>
+    <form action="/register" method="get" >
+          <label>
+            <p class="label-txt">Enter your email:</p>
+            <input type="text" class="input" name="user_email">
+            <div class="line-box">
+              <div class="line"></div>
+            </div>
+          </label>
+          <label>
+            <p class="label-txt">Enter your name:</p>
+            <input type="text" class="input" name="user_name">
+            <div class="line-box">
+              <div class="line"></div>
+            </div>
+          </label>
+          <label>
+            <p class="label-txt">Enter access requested (ADMIN/OPERATOR/VIEWER):</p>
+            <input type="text" class="input" name="user_permission">
+            <div class="line-box">
+              <div class="line"></div>
+            </div>
+          </label>
+          <button type="submit">submit</button>
+    </form>
 </body>
 </html>
