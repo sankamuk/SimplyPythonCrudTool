@@ -8,7 +8,7 @@
 
 Simple Flask based DB CRUD Web Application with an intuitive UI and so much more.
 
-Check everything in the [DOCS](https://sankamuk.github.io/SimplyPythonCrudTool/) page.
+Check everything in the ***[DOCS](https://sankamuk.github.io/SimplyPythonCrudTool/)*** page.
 
 
 
