@@ -7,6 +7,9 @@
 Simple Python CRUD Tool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Overview
++++++++++++++
+
 `Web based DB CRUD application` with intuitive UI for all CRUD feature along with below addons:
 
 * Auto **discovery** of tables from database schema. Also allow not to list specific table using patterns.
@@ -19,10 +22,36 @@ Simple Python CRUD Tool
 * Email based **notification** support for specific operations.
 
 
-.. include:: installation.rst
-.. include:: usage.rst
-.. include:: configuration.rst
+Installation
++++++++++++++
 
+Steps for quick start and complex deployments are documented at `LINK <installation.html>`_
+
+
+Configuration
++++++++++++++
+
+Detail process to configure the application is documented at `LINK <configuration.html>`_
+
+.. warning:: Before you start the application after installation you **will need** to configure it, with no configuration you can do nothing.
+
+
+Usage
++++++++++++++
+
+You can also have a look on the usage guide, specially the basic walk through at `LINK <usage.html>`_
+
+
+Bug Report and Support
++++++++++++++
+
+Use GitHub issue tracking system for issues, check out details at this `LINK <https://docs.github.com/en/issues/tracking-your-work-with-issues>`_
+
+
+Developing and Contributing
++++++++++++++
+
+We'd love to get contributions from you! So start making your pull request. `DETAILS <#>`_
 
 
 
