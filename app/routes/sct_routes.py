@@ -3,16 +3,16 @@
     -------
     This module consists of application views
 """
-from flask import render_template, request, redirect, url_for, jsonify
 import flask_excel
+from flask import render_template, request, url_for, redirect
 from math import ceil
 from datetime import datetime
 import random
 from flask_login import current_user
 
-from utilities.sct_env import *
-from utilities.sct_security import get_user_role
-from utilities.sct_mail import send_mail
+from app.utilities.sct_env import *
+from app.utilities.sct_security import get_user_role
+from app.utilities.sct_mail import send_mail
 
 
 def define_routes(app, db, uploads):

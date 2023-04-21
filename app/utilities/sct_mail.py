@@ -6,7 +6,7 @@
 from flask_mail import Mail, Message
 from jinja2 import Environment
 
-from utilities.sct_env import *
+from app.utilities.sct_env import *
 
 SCT_EMAIL_TEMPLATE_REGISTER = """
 <body>
@@ -125,6 +125,6 @@ def send_mail(app, **kwargs):
             )
             (app.config["SCT_MAIL"]).send(mssg)
         else:
-            app.log.warn("Unknown mail type.")
+            app.logger.warn("Unknown mail type.")
     else:
-        app.log.warn("Mail not enabled thus no action will be taken.")
+        app.logger.warn("Mail not enabled thus no action will be taken.")

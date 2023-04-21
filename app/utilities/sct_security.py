@@ -1,15 +1,15 @@
 import logging
-import secrets
 import base64
 import hashlib
 import requests
+import secrets
 from flask_login import (
     login_user,
     logout_user,
 )
-from flask import redirect, request, session, url_for
-from utilities.sct_user import User
-from utilities.sct_env import *
+from flask import request, session, redirect, url_for
+from app.utilities.sct_user import User
+from app.utilities.sct_env import *
 
 
 def define_security(app, login_manager):

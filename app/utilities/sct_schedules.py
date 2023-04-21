@@ -5,9 +5,8 @@
 """
 import datetime
 import json
-import os
-from utilities.sct_env import *
-from utilities.sct_mail import send_mail
+from app.utilities.sct_env import *
+from app.utilities.sct_mail import send_mail
 
 
 def sct_scheduled_bulk_loader(app, db):
