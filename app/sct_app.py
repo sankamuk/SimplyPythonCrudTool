@@ -3,7 +3,7 @@
     -------
     Simple Python Crud Tool - Entrypoint Script
 """
-from flask import Flask, redirect, url_for, g
+from flask import Flask, redirect, url_for
 import flask_excel
 from flask_apscheduler import APScheduler
 from flask_uploads import UploadSet, configure_uploads, DATA
@@ -14,13 +14,13 @@ from flask_login import (
     LoginManager
 )
 
-from utilities.sct_env import *
-from utilities.sct_db import DbBackEnd
-from utilities.sct_logging import logger_conf_dict
-from routes.sct_routes import define_routes
-from utilities.sct_security import define_security
-from utilities.sct_mail import enable_email_support
-from utilities.sct_schedules import sct_scheduled_bulk_loader
+from app.utilities.sct_env import *
+from app.utilities.sct_db import DbBackEnd
+from app.utilities.sct_logging import logger_conf_dict
+from app.routes.sct_routes import define_routes
+from app.utilities.sct_security import define_security
+from app.utilities.sct_mail import enable_email_support
+from app.utilities.sct_schedules import sct_scheduled_bulk_loader
 
 # Create Application
 # # Initiate application
@@ -81,10 +81,24 @@ define_routes(app, db, files_uploads)
 
 @app.route("/")
 def home():
+    """
+    Default home route
+
+    :return: SCT Application Home (HTML)
+    """
     return redirect(url_for('data'))
 
 
 # Init Application
-if __name__ == '__main__':
+def init_sct_app():
+    """
+    Initialize SCT Application
+
+    :return: None
+    """
     scheduler.start()
     app.run()
+
+
+if __name__ == '__main__':
+    init_sct_app()

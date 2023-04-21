@@ -7,8 +7,8 @@ import json
 import csv
 import psycopg2
 from math import ceil
-from utilities.sct_utils import tuple_to_dict, tuple_to_list
-from utilities.sct_query import (
+from app.utilities.sct_utils import tuple_to_dict, tuple_to_list
+from app.utilities.sct_query import (
     SCT_QUERY_POSTGRES_GET_FK_DETAIL,
     SCT_QUERY_POSTGRES_GET_FK_LOOKUP,
     SCT_QUERY_POSTGRES_GET_COLMN_DETAIL,
