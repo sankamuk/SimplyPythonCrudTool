@@ -126,13 +126,13 @@ def get_user_role(user):
     """
     logging.info("User: {}".format(user))
     if not user:
-        return SCT_ACCESS_ANONYMOUS_ROLE
+        return sct_access_anonymous
     else:
-        if "*" in SCT_ACCESS_ADMIN or user in SCT_ACCESS_ADMIN.split(","):
+        if "*" in sct_access_admin or user in sct_access_admin.split(","):
             return "ADMIN"
-        elif "*" in SCT_ACCESS_OPERATOR or user in SCT_ACCESS_OPERATOR.split(","):
+        elif "*" in sct_access_operator or user in sct_access_operator.split(","):
             return "OPERATOR"
-        elif "*" in SCT_ACCESS_VIEWER or user in SCT_ACCESS_VIEWER.split(","):
+        elif "*" in sct_access_viewer or user in sct_access_viewer.split(","):
             return "VIEWER"
         else:
             return "NONE"
