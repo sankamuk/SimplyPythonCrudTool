@@ -29,6 +29,8 @@ sct_db_pwd = os.environ["SCT_DB_PWD"]
 sct_table_auto_populated_column_comment = "NO_DIRECT_UPDATE"
 # # Table columns to be available in lookup view for insert/updated in referred table
 sct_table_referenced_column_in_lookup_view = "IS_LOOKED_UP"
+# # Table to be blacklisted
+sct_table_table_blacklist = os.environ.get("SCT_DB_TABLE_BLACKLIST", "")
 #######################################################################
 
 #######################################################################
@@ -78,13 +80,13 @@ sct_auth_okta_client_secret = os.environ.get("SCT_AUTH_OKTA_CLIENT_SECRET", None
 # #         ADMIN       - (OPERATOR ROLE) + View Audits
 SCT_ACCESS_ROLES = ["ADMIN", "OPERATOR", "VIEWER", "NONE"]
 # # Roles assigned to anonymous user (without login)
-SCT_ACCESS_ANONYMOUS_ROLE = "NONE"
+sct_access_anonymous = os.environ.get("SCT_ACCESS_ANONYMOUS_ROLE", "NONE")
 # # List of principal assigned ADMIN role
-SCT_ACCESS_ADMIN = "*"
+sct_access_admin = os.environ.get("SCT_ACCESS_ADMIN", "*")
 # # List of principal assigned OPERATOR role
-SCT_ACCESS_OPERATOR = "*"
+sct_access_operator = os.environ.get("SCT_ACCESS_OPERATOR", "*")
 # # List of principal assigned VIEWER role
-SCT_ACCESS_VIEWER = "*"
+sct_access_viewer = os.environ.get("SCT_ACCESS_VIEWER", "*")
 #######################################################################
 
 #######################################################################

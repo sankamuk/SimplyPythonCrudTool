@@ -7,6 +7,10 @@
 Simple Python CRUD Tool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+.. warning:: Current implementation only supports ***Postgres***, but support for all other **major RDBMS** will follow soon.
+
+
 Overview
 +++++++++++++
 
@@ -33,7 +37,7 @@ Configuration
 
 Detail process to configure the application is documented at `LINK <configuration.html>`_
 
-.. warning:: Before you start the application after installation you **will need** to configure it, with no configuration you can do nothing.
+.. note:: Before you start the application after installation you **will need** to configure it, with no configuration you can do nothing.
 
 
 Usage

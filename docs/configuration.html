@@ -36,32 +36,40 @@
 <aside class="topic">
 <p class="topic-title">Basic configuration for quick start.</p>
 <p>You should set the below before even initiating quick start for the application.
-SCT_DB_NAME
-SCT_DB_SCHEMA
-SCT_DB_USER
-SCT_DB_HOST
-SCT_DB_PORT
-SCT_DB_PWD</p>
+- SCT_DB_NAME</p>
+<ul class="simple">
+<li><p>SCT_DB_SCHEMA</p></li>
+<li><p>SCT_DB_USER</p></li>
+<li><p>SCT_DB_HOST</p></li>
+<li><p>SCT_DB_PORT</p></li>
+<li><p>SCT_DB_PWD</p></li>
+</ul>
 <p>With this in place your basic CRUD operation will be <strong>ON</strong>.</p>
 </aside>
 <p>Below is the component wise configurations.</p>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head" colspan="2"><p>Primary Data Source</p></th>
-</tr>
-<tr class="row-even"><th class="head"><p>Config</p></th>
-<th class="head"><p>Remark</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-odd"><td><p>SCT_DB_NAME</p></td>
-<td><p>Database name</p></td>
-</tr>
-<tr class="row-even"><td><p>SCT_DB_SCHEMA</p></td>
-<td><p>Database schema</p></td>
-</tr>
-</tbody>
-</table>
+<p><strong>DB Setup</strong>: RDBMS hosting the primary datastore can be configured using below setting.</p>
+<p><strong>UI Setup</strong>: Web UI operation settings.</p>
+<dl class="simple">
+<dt><strong>Audit Setup</strong>: Currently only RDBMS based audit is supported.</dt><dd><p>Also the Audit table need to be available in same DB instance like primary data but it can reside on different schema.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt><strong>Authentication Setup</strong>: Currently only Okta based authentication is supported.</dt><dd><p>There is also new user registration page where new user request for access which drops mail to admin to add user to Okta organization.</p>
+</dd>
+</dl>
+<p><strong>Authorization Setup</strong>: Current there are four predefined roles for authorization, below is the access for the same.</p>
+<ul class="simple">
+<li><p><strong>NONE</strong>: No access</p></li>
+<li><p><strong>VIEWER</strong>: View table data only, no mutation allowed</p></li>
+<li><p><strong>OPERATOR</strong>: View and mutate table data</p></li>
+<li><p><strong>ADMIN</strong>: View and mutate table data also track audits</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you have not enabled authentication you need to set <code class="docutils literal notranslate"><span class="pre">SCT_ACCESS_ANONYMOUS_ROLE</span></code> to <code class="docutils literal notranslate"><span class="pre">ADMIN</span></code>.</p>
+<p>You can use wild card * if you want to give <strong>*all authenticated*</strong> user to a role.</p>
+</div>
+<p><strong>Email Setup</strong>: If you do not want to use email notification set enabled to blank string. If you enable you will need to provide configuration from your email provider.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>All configuration defaults are available for verification and updating in module <code class="docutils literal notranslate"><span class="pre">utilities.sct_env</span></code>.</p>
