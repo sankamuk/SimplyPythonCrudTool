@@ -1,6 +1,7 @@
 psycopg2-binary
 Flask
 Flask-Login
+Flask-Cors
 pyOpenSSL
 requests
 Flask-Excel
@@ -9,3 +10,4 @@ Flask-APScheduler
 Flask-Mail
 jinja2
 Sphinx
+build

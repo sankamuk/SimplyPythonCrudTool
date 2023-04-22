@@ -28,35 +28,50 @@ Though its not mandatory to use virtual environment but its always advisable, fi
 
 .. note::  Before you proceed, do not forget to initiate your **virtual environment** .
 
+Example::
+
+    > python -m venv venv
+    > venv\Scripts\activate.bat
+
+
 Download Application
 +++++++++++++++++++++
 
-Though this can be achieved in many way the simplest way is CLI using `GIT <https://git-scm.com/>`_. Below is the command for the same::
+.. note::  Before we proceed you should have created and initiated your virtual environment.
 
-    $ git clone https://github.com/sankamuk/SimplyPythonCrudTool.git
+Just install the application from pip repo. Below is the command for the same::
 
-.. note::  One can also simple download the application as a zip from GitHub repo.
+    > pip install simple-python-crud-tool
 
-Install Dependencies
+.. note::  Once install you should have your start script available in CMD ``sct-run``.
+
+Setup Environment
 +++++++++++++++++++++
 
-With you in virtual environment, all you need to do for dependency installation is below::
+As already discussed in `CONFIGURATION <configuration.html>`_ this application is dependent on environment,
+thus all you need to do before starting up us to set environment as below::
 
-    $ python -m pip install -r requirements.txt
+    > SET SCT_DB_NAME=******
+    > SET SCT_DB_USER=******
+    > SET SCT_DB_PWD=******
+    > SET SCT_DB_HOST=******
+    > SET SCT_AUTH_OKTA_DOMAIN=******
+    > SET SCT_AUTH_OKTA_CLIENT_ID=******
+    > SET SCT_AUTH_OKTA_CLIENT_SECRET=******
 
-.. note::  You should be inside the application folder with initiated virtual environment.
+.. note::  Above configuration is not exhaustive rather just representative.
 
 Execute Application
 +++++++++++++++++++++
 
 Now its time of run the application, and for that you do::
 
-    $ python app.py
+    > sct-run
 
-.. note::  Now your application will be available locally `AT <http://localhost:5000/>`_ . But before that you need to configure for any meaningful usage.
+.. note::  Now your application will be available locally `AT <http://localhost:5000/>`_
 
 
-Though this could only be used for testing, nevertheless it is quick and easy method. Though our recommendation should be using Docker.
+.. warning::  Our recommendation usage is Docker.
 
 
 

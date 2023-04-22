@@ -5,16 +5,22 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+import os, sys
 
 project = 'Simple Python CRUD Tool'
 copyright = '2023, Sankar Mukherjee'
 author = 'Sankar Mukherjee'
-release = '0.0.1'
+release = '1.0.0'
+
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinx.ext.githubpages"]
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.githubpages'
+]
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -24,5 +30,5 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = 'bizstyle'
 html_static_path = ['_static']

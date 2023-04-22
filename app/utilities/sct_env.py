@@ -24,7 +24,7 @@ sct_db_host = os.environ.get("SCT_DB_HOST", "localhost")
 # # Database port
 sct_db_port = os.environ.get("SCT_DB_PORT", "5432")
 # # Database user password
-sct_db_pwd = os.environ["SCT_DB_PWD"]
+sct_db_pwd = os.environ.get("SCT_DB_PWD", "")
 # # Table column comment that are not insert/update enabled
 sct_table_auto_populated_column_comment = "NO_DIRECT_UPDATE"
 # # Table columns to be available in lookup view for insert/updated in referred table
