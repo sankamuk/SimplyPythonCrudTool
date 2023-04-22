@@ -1,0 +1,616 @@
+
+
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>app.utilities package &#8212; Simple Python CRUD Tool 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bizstyle.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="app.routes package" href="app.routes.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="app.routes.html" title="app.routes package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Simple Python CRUD Tool 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >app</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="app.html" accesskey="U">app package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">app.utilities package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="app-utilities-package">
+<h1>app.utilities package<a class="headerlink" href="#app-utilities-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-app.utilities.sct_db">
+<span id="app-utilities-sct-db-module"></span><h2>app.utilities.sct_db module<a class="headerlink" href="#module-app.utilities.sct_db" title="Permalink to this heading">¶</a></h2>
+<section id="sct-db-py">
+<h3>sct_db.py<a class="headerlink" href="#sct-db-py" title="Permalink to this heading">¶</a></h3>
+<p>This module controls SCT Tool specific database interaction</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.utilities.sct_db.</span></span><span class="sig-name descname"><span class="pre">DbBackEnd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'postgres'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'postgres'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'5432'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Backend Database Interface.
+.. admonition:: Note</p>
+<blockquote>
+<div><p>Defines all DB Communication codes.</p>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.add_audit">
+<span class="sig-name descname"><span class="pre">add_audit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audit_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audit_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_performed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.add_audit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a Audit record</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audit_table</strong> – Audit table name</p></li>
+<li><p><strong>status</strong> – Audit operation status</p></li>
+<li><p><strong>audit_user</strong> – Audit user</p></li>
+<li><p><strong>operation_performed</strong> – Audit operation</p></li>
+<li><p><strong>table_name</strong> – Table impacted</p></li>
+<li><p><strong>operation_metadata</strong> – Operation detail</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.add_table_record">
+<span class="sig-name descname"><span class="pre">add_table_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.add_table_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add row to table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Table name</p></li>
+<li><p><strong>kwargs</strong> – List of column values of new record</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.bulk_load_table_records">
+<span class="sig-name descname"><span class="pre">bulk_load_table_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.bulk_load_table_records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add row to table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Table name</p></li>
+<li><p><strong>file_path</strong> – File name to load table from</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.db_connection">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">db_connection</span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.db_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>DB Connection</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Postgres DB API Connection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.drop_table_record">
+<span class="sig-name descname"><span class="pre">drop_table_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.drop_table_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Drop row from table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Table name</p></li>
+<li><p><strong>kwargs</strong> – List of column values of new record</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.edit_table_record">
+<span class="sig-name descname"><span class="pre">edit_table_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.edit_table_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit row to table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Table name</p></li>
+<li><p><strong>kwargs</strong> – List of column values of new record</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.finalize">
+<span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes a DbBackEnd</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_audits">
+<span class="sig-name descname"><span class="pre">get_audits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audit_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_audits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Audits</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audit_table</strong> – Audit table name</p></li>
+<li><p><strong>batch</strong> – Row batch, where each batch will be of size 50 at least</p></li>
+<li><p><strong>page_size</strong> – Max record per page</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Audit data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_cursor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_cursor</span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_cursor" title="Permalink to this definition">¶</a></dt>
+<dd><p>DB Cursor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Postgres DB API Cursor from connection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_pending_bulk_loading">
+<span class="sig-name descname"><span class="pre">get_pending_bulk_loading</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audit_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_failure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_pending_bulk_loading" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of files pending for processing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audit_table</strong> – Audit table name</p></li>
+<li><p><strong>max_failure</strong> – Max number of failure before we discard a file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary with keys for table name and file to load</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_table_columns">
+<span class="sig-name descname"><span class="pre">get_table_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_fk_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_table_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Column list for a table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Table name</p></li>
+<li><p><strong>load_fk_data</strong> – Whether to load FK column data for lookup</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Metadata dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_table_data">
+<span class="sig-name descname"><span class="pre">get_table_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_table_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch data for a table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Table name</p></li>
+<li><p><strong>project_list</strong> – List of columns to project</p></li>
+<li><p><strong>order_list</strong> – List of columns to order data by</p></li>
+<li><p><strong>limit</strong> – Max rows fetched</p></li>
+<li><p><strong>offset</strong> – Row batch, where each batch will be of size 50 at least</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of rows</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_table_info">
+<span class="sig-name descname"><span class="pre">get_table_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_table_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Table metadata</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Table name</p></li>
+<li><p><strong>batch</strong> – Row batch, where each batch will be of size 50 at least</p></li>
+<li><p><strong>page_size</strong> – Max record per page</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Metadata dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_table_list">
+<span class="sig-name descname"><span class="pre">get_table_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'public'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_table_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of table name in DB</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>schema</strong> – DB Schema</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of Tables</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-app.utilities.sct_env">
+<span id="app-utilities-sct-env-module"></span><h2>app.utilities.sct_env module<a class="headerlink" href="#module-app.utilities.sct_env" title="Permalink to this heading">¶</a></h2>
+<section id="sct-env-py">
+<h3>sct_env.py<a class="headerlink" href="#sct-env-py" title="Permalink to this heading">¶</a></h3>
+<p>Environment setup script</p>
+</section>
+</section>
+<section id="module-app.utilities.sct_logging">
+<span id="app-utilities-sct-logging-module"></span><h2>app.utilities.sct_logging module<a class="headerlink" href="#module-app.utilities.sct_logging" title="Permalink to this heading">¶</a></h2>
+<section id="sct-logging-py">
+<h3>sct_logging.py<a class="headerlink" href="#sct-logging-py" title="Permalink to this heading">¶</a></h3>
+<p>Logger setup script</p>
+</section>
+</section>
+<section id="module-app.utilities.sct_mail">
+<span id="app-utilities-sct-mail-module"></span><h2>app.utilities.sct_mail module<a class="headerlink" href="#module-app.utilities.sct_mail" title="Permalink to this heading">¶</a></h2>
+<section id="sct-mail-py">
+<h3>sct_mail.py<a class="headerlink" href="#sct-mail-py" title="Permalink to this heading">¶</a></h3>
+<p>This module consists of mail utilities</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utilities.sct_mail.enable_email_support">
+<span class="sig-prename descclassname"><span class="pre">app.utilities.sct_mail.</span></span><span class="sig-name descname"><span class="pre">enable_email_support</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_mail.enable_email_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mail support</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>app</strong> – Application instance</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utilities.sct_mail.send_mail">
+<span class="sig-prename descclassname"><span class="pre">app.utilities.sct_mail.</span></span><span class="sig-name descname"><span class="pre">send_mail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_mail.send_mail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send email</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app</strong> – Application instance</p></li>
+<li><p><strong>kwargs</strong> – Mail argument</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.utilities.sct_query">
+<span id="app-utilities-sct-query-module"></span><h2>app.utilities.sct_query module<a class="headerlink" href="#module-app.utilities.sct_query" title="Permalink to this heading">¶</a></h2>
+<section id="sct-query-py">
+<h3>sct_query.py<a class="headerlink" href="#sct-query-py" title="Permalink to this heading">¶</a></h3>
+<p>This module consists of RDBMS Queries</p>
+</section>
+</section>
+<section id="module-app.utilities.sct_schedules">
+<span id="app-utilities-sct-schedules-module"></span><h2>app.utilities.sct_schedules module<a class="headerlink" href="#module-app.utilities.sct_schedules" title="Permalink to this heading">¶</a></h2>
+<section id="sct-schedules-py">
+<h3>sct_schedules.py<a class="headerlink" href="#sct-schedules-py" title="Permalink to this heading">¶</a></h3>
+<p>This module consists of schedule tasks</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utilities.sct_schedules.sct_scheduled_bulk_loader">
+<span class="sig-prename descclassname"><span class="pre">app.utilities.sct_schedules.</span></span><span class="sig-name descname"><span class="pre">sct_scheduled_bulk_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_schedules.sct_scheduled_bulk_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>SCT Tool Scheduled Tasks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app</strong> – Application instance</p></li>
+<li><p><strong>db</strong> – Database Interface Object &lt;DbBackEnd&gt;</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.utilities.sct_security">
+<span id="app-utilities-sct-security-module"></span><h2>app.utilities.sct_security module<a class="headerlink" href="#module-app.utilities.sct_security" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utilities.sct_security.define_security">
+<span class="sig-prename descclassname"><span class="pre">app.utilities.sct_security.</span></span><span class="sig-name descname"><span class="pre">define_security</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">login_manager</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_security.define_security" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application Security</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app</strong> – Flask application object</p></li>
+<li><p><strong>login_manager</strong> – Database Interface Object &lt;DbBackEnd&gt;</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utilities.sct_security.get_user_role">
+<span class="sig-prename descclassname"><span class="pre">app.utilities.sct_security.</span></span><span class="sig-name descname"><span class="pre">get_user_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_security.get_user_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the role for a given user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user</strong> – User email</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Role</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.utilities.sct_user">
+<span id="app-utilities-sct-user-module"></span><h2>app.utilities.sct_user module<a class="headerlink" href="#module-app.utilities.sct_user" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.utilities.sct_user.User">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.utilities.sct_user.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_user.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">UserMixin</span></code></p>
+<p>Custom User class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_user.User.claims">
+<span class="sig-name descname"><span class="pre">claims</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_user.User.claims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this method to render all assigned claims on profile page.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_user.User.create">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_user.User.create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.utilities.sct_user.User.get">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_user.User.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-app.utilities.sct_utils">
+<span id="app-utilities-sct-utils-module"></span><h2>app.utilities.sct_utils module<a class="headerlink" href="#module-app.utilities.sct_utils" title="Permalink to this heading">¶</a></h2>
+<section id="sct-utils-py">
+<h3>sct_utils.py<a class="headerlink" href="#sct-utils-py" title="Permalink to this heading">¶</a></h3>
+<p>This module consists of utility functions used by other module</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utilities.sct_utils.tuple_to_dict">
+<span class="sig-prename descclassname"><span class="pre">app.utilities.sct_utils.</span></span><span class="sig-name descname"><span class="pre">tuple_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tuple_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#app.utilities.sct_utils.tuple_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a tuple list and a list of dictionary keys returning dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key_list</strong> – Dictionary keys</p></li>
+<li><p><strong>tuple_list</strong> – List of tuples</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of Dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.utilities.sct_utils.tuple_to_list">
+<span class="sig-prename descclassname"><span class="pre">app.utilities.sct_utils.</span></span><span class="sig-name descname"><span class="pre">tuple_to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tuple_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#app.utilities.sct_utils.tuple_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a list of single item tuple to a simple python list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tuple_list</strong> – Single element tuple</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of elements</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-app.utilities">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.utilities" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">app.utilities package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-app.utilities.sct_db">app.utilities.sct_db module</a><ul>
+<li><a class="reference internal" href="#sct-db-py">sct_db.py</a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd"><code class="docutils literal notranslate"><span class="pre">DbBackEnd</span></code></a><ul>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.add_audit"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_audit()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.add_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_table_record()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.bulk_load_table_records"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.bulk_load_table_records()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.db_connection"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.db_connection</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.drop_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.drop_table_record()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.edit_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.edit_table_record()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.finalize"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.finalize()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_audits"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_audits()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_cursor"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_cursor</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_pending_bulk_loading"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_pending_bulk_loading()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_table_columns"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_columns()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_table_data"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_data()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_table_info"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_info()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_table_list"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_list()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.utilities.sct_env">app.utilities.sct_env module</a><ul>
+<li><a class="reference internal" href="#sct-env-py">sct_env.py</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.utilities.sct_logging">app.utilities.sct_logging module</a><ul>
+<li><a class="reference internal" href="#sct-logging-py">sct_logging.py</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.utilities.sct_mail">app.utilities.sct_mail module</a><ul>
+<li><a class="reference internal" href="#sct-mail-py">sct_mail.py</a></li>
+<li><a class="reference internal" href="#app.utilities.sct_mail.enable_email_support"><code class="docutils literal notranslate"><span class="pre">enable_email_support()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_mail.send_mail"><code class="docutils literal notranslate"><span class="pre">send_mail()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.utilities.sct_query">app.utilities.sct_query module</a><ul>
+<li><a class="reference internal" href="#sct-query-py">sct_query.py</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.utilities.sct_schedules">app.utilities.sct_schedules module</a><ul>
+<li><a class="reference internal" href="#sct-schedules-py">sct_schedules.py</a></li>
+<li><a class="reference internal" href="#app.utilities.sct_schedules.sct_scheduled_bulk_loader"><code class="docutils literal notranslate"><span class="pre">sct_scheduled_bulk_loader()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.utilities.sct_security">app.utilities.sct_security module</a><ul>
+<li><a class="reference internal" href="#app.utilities.sct_security.define_security"><code class="docutils literal notranslate"><span class="pre">define_security()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_security.get_user_role"><code class="docutils literal notranslate"><span class="pre">get_user_role()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.utilities.sct_user">app.utilities.sct_user module</a><ul>
+<li><a class="reference internal" href="#app.utilities.sct_user.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a><ul>
+<li><a class="reference internal" href="#app.utilities.sct_user.User.claims"><code class="docutils literal notranslate"><span class="pre">User.claims()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_user.User.create"><code class="docutils literal notranslate"><span class="pre">User.create()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_user.User.get"><code class="docutils literal notranslate"><span class="pre">User.get()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.utilities.sct_utils">app.utilities.sct_utils module</a><ul>
+<li><a class="reference internal" href="#sct-utils-py">sct_utils.py</a></li>
+<li><a class="reference internal" href="#app.utilities.sct_utils.tuple_to_dict"><code class="docutils literal notranslate"><span class="pre">tuple_to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#app.utilities.sct_utils.tuple_to_list"><code class="docutils literal notranslate"><span class="pre">tuple_to_list()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.utilities">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="app.routes.html"
+                          title="previous chapter">app.routes package</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/app.utilities.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="app.routes.html" title="app.routes package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Simple Python CRUD Tool 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >app</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="app.html" >app package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">app.utilities package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Sankar Mukherjee.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+  </body>
+</html>

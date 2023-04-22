@@ -52,10 +52,11 @@ Bug Report and Support
 Use GitHub issue tracking system for issues, check out details at this `LINK <https://docs.github.com/en/issues/tracking-your-work-with-issues>`_
 
 
-Developing and Contributing
+Contribute
 +++++++++++++
 
-We'd love to get contributions from you! So start making your pull request. `DETAILS <#>`_
+We'd love to get contributions from you! So start making your pull request. `DETAILS <contribution.html>`_
+
 
 
 
@@ -63,7 +64,7 @@ We'd love to get contributions from you! So start making your pull request. `DET
    :maxdepth: 2
    :caption: Contents:
 
-
+   modules
 
 Indices and tables
 ==================
