@@ -13,7 +13,7 @@ from app.utilities.sct_security import get_user_role
 from app.utilities.sct_mail import send_mail
 
 
-def define_routes(app):
+def define_routes_view(app):
     """
     Application Routes
 

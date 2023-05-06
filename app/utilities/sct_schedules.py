@@ -9,7 +9,7 @@ from app.utilities.sct_env import *
 from app.utilities.sct_mail import send_mail
 
 
-def sct_scheduled_bulk_loader(app, db):
+def sct_scheduled_bulk_loader(app):
     """
     SCT Tool Scheduled Tasks
 
@@ -18,6 +18,7 @@ def sct_scheduled_bulk_loader(app, db):
     :return: None
     """
     app.logger.info("Scheduled Job (sct_scheduled_bulk_loader) started")
+    db = app.config["SCT_AUDIT_DB"]
     pending_files = db.get_pending_bulk_loading(sct_audit_db_table, sct_scheduler_job_max_attempt)
     app.logger.info("List of pending files to be processed are - {}".format(pending_files))
     table_list = []

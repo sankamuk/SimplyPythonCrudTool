@@ -1,30 +1,33 @@
 """
-    sct_db.py
+    sct_postgres.py
     -------
-    This module controls SCT Tool specific database interaction
+    This module controls SCT Tool specific Postgres database interaction
 """
 import json
 import csv
 import psycopg2
 from math import ceil
 from app.utilities.sct_utils import tuple_to_dict, tuple_to_list
-from app.utilities.sct_query import (
-    SCT_QUERY_POSTGRES_GET_FK_DETAIL,
-    SCT_QUERY_POSTGRES_GET_FK_LOOKUP,
-    SCT_QUERY_POSTGRES_GET_COLMN_DETAIL,
-    SCT_QUERY_POSTGRES_GET_PK_DETAIL,
-    SCT_QUERY_POSTGRES_INSERT_ROW,
-    SCT_QUERY_POSTGRES_DROP_ROW,
-    SCT_QUERY_POSTGRES_UPDATE_ROW,
-    SCT_QUERY_POSTGRES_AUDIT_GET,
-    SCT_QUERY_POSTGRES_AUDIT_PUT,
-    SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD
+from app.utilities.databases.sct_postgres_query import (
+    SCT_QUERY_AUDIT_GET,
+    SCT_QUERY_AUDIT_PUT,
+    SCT_QUERY_DROP_ROW,
+    SCT_QUERY_INSERT_ROW,
+    SCT_QUERY_UPDATE_ROW,
+    SCT_QUERY_GET_FK_DETAIL,
+    SCT_QUERY_GET_FK_LOOKUP,
+    SCT_QUERY_GET_PK_DETAIL,
+    SCT_QUERY_AUDIT_BULK_LOAD,
+    SCT_QUERY_GET_COLUMN_DETAIL,
+    SCT_QUERY_GET_PAGINATE_DATA,
+    SCT_QUERY_GET_TABLE_LIST,
+    SCT_QUERY_AUDIT_TABLE_CREATION
 )
 
 
 class DbBackEnd:
     """
-        Backend Database Interface.
+        Backend Postgres Database Interface.
         .. admonition:: Note
             Defines all DB Communication codes.
     """
@@ -92,11 +95,96 @@ class DbBackEnd:
         """
         curs = self.get_cursor
         curs.execute(
-            """
-            SELECT table_name FROM information_schema.tables WHERE table_schema = '{}'
-            """.format(schema)
+            SCT_QUERY_GET_TABLE_LIST.format(schema)
         )
         return tuple_to_list(curs.fetchall())
+
+    def get_table_pk(self, table: str) -> dict:
+        """
+        Primary Key Column list for a table
+
+        :param table: Table name
+        :return: Metadata dictionary
+        """
+        meta_dict = dict()
+        curs = self.get_cursor
+        curs.execute(
+            SCT_QUERY_GET_PK_DETAIL.format(table)
+        )
+        meta_dict["columns"] = [cd[0] for cd in curs.fetchall()]
+        return meta_dict
+
+    def get_table_fk(self, table: str) -> dict:
+        """
+        Foreign Key Column list for a table
+
+        :param table: Table name
+        :return: Metadata dictionary
+        """
+        meta_dict = dict()
+        meta_dict["columns"] = dict()
+        curs = self.get_cursor
+        curs.execute(SCT_QUERY_GET_FK_DETAIL)
+        for fkd in curs.fetchall():
+            if fkd[2] == table:
+                meta_dict["columns"][fkd[3]] = {
+                    "table": fkd[4],
+                    "column": fkd[5]
+                }
+        return meta_dict
+
+    def get_table_insert_columns(self, table: str) -> dict:
+        """
+        Column list used in insert record for a table
+
+        :param table: Table name
+        :return: Metadata dictionary
+        """
+        meta_dict = dict()
+        meta_dict["columns"] = []
+        curs = self.get_cursor
+        p_keys = self.get_table_pk(table)
+        curs.execute(
+            SCT_QUERY_GET_COLUMN_DETAIL.format(table)
+        )
+        for cd in curs.fetchall():
+            col_nm = cd[1]
+            if col_nm in p_keys and cd[5] and "nextval" in cd[5]:
+                # print("Primary key auto-generate column {}".format(col_nm))
+                pass
+            elif cd[2] and "not updatable" in (cd[2]).lower():
+                # print("Non updatable column {}".format(col_nm))
+                pass
+            else:
+                (meta_dict["columns"]).append(col_nm)
+
+        return meta_dict
+
+    def get_table_columns(self, table: str, load_fk_data: bool = False) -> dict:
+        """
+        Column list for a table
+
+        :param table: Table name
+        :param load_fk_data: Whether to load FK column data for lookup
+        :return: Metadata dictionary
+        """
+        meta_dict = dict()
+        meta_dict["columns"] = dict()
+        curs = self.get_cursor
+
+        # Get Column List
+        curs.execute(
+            SCT_QUERY_GET_COLUMN_DETAIL.format(table)
+        )
+        for cd in curs.fetchall():
+            col_nm = cd[1]
+            meta_dict["columns"][col_nm] = {
+                "type": cd[3],
+                "description": cd[2],
+                "length": cd[4]
+            }
+
+        return meta_dict
 
     def get_table_data(self, table: str, project_list: list, order_list: list, limit: int, offset: int = 0):
         """
@@ -111,9 +199,7 @@ class DbBackEnd:
         """
         curs = self.get_cursor
         curs.execute(
-            """
-            SELECT {} FROM {} ORDER BY {} OFFSET {} LIMIT {}
-            """.format(
+            SCT_QUERY_GET_PAGINATE_DATA.format(
                 ",".join(project_list),
                 table,
                 ",".join(order_list),
@@ -123,108 +209,23 @@ class DbBackEnd:
         )
         return curs.fetchall()
 
-    def get_table_columns(self, table: str, load_fk_data: bool = False) -> dict:
+    def get_fk_lookup_data(self, table: str):
         """
-        Column list for a table
+        Fetch data for lookup for all FK columns
 
         :param table: Table name
-        :param load_fk_data: Whether to load FK column data for lookup
-        :return: Metadata dictionary
+        :return: List of rows
         """
-        meta_dict = dict()
-        meta_dict["view"] = dict()
-        meta_dict["insert"] = dict()
-        meta_dict["fk_columns"] = dict()
+        meta_dict = self.get_table_fk(table)
         curs = self.get_cursor
-
-        # Get Table Primary Keys
-        curs.execute(
-            SCT_QUERY_POSTGRES_GET_PK_DETAIL.format(table)
-        )
-        meta_dict["pk_columns"] = [cd[0] for cd in curs.fetchall()]
-
-        # Get Column List
-        curs.execute(
-            SCT_QUERY_POSTGRES_GET_COLMN_DETAIL.format(table)
-        )
-        for cd in curs.fetchall():
-            col_nm = cd[1]
-            meta_dict["view"][col_nm] = {
-                "type": cd[3],
-                "description": cd[2],
-                "length": cd[4]
-            }
-            if col_nm in meta_dict["pk_columns"] and cd[5] and "nextval" in cd[5]:
-                # print("Primary key auto-generate column {}".format(col_nm))
-                pass
-            elif cd[2] and "not updatable" in (cd[2]).lower():
-                # print("Non updatable column {}".format(col_nm))
-                pass
-            else:
-                meta_dict["insert"][col_nm] = {
-                    "type": cd[3],
-                    "description": cd[2],
-                    "length": cd[4]
-                }
-
-            # Get Table Foreign Keys
-            curs.execute(SCT_QUERY_POSTGRES_GET_FK_DETAIL)
-            for fkd in curs.fetchall():
-                if fkd[2] == table:
-                    meta_dict["fk_columns"][fkd[3]] = {
-                        "table": fkd[4],
-                        "column": fkd[5],
-                        "data": []
-                    }
-            if load_fk_data:
-                for fk in meta_dict["fk_columns"]:
-                    curs.execute(
-                        SCT_QUERY_POSTGRES_GET_FK_LOOKUP.format(
-                            meta_dict["fk_columns"][fk].get("column"),
-                            meta_dict["fk_columns"][fk].get("table")
-                        )
-                    )
-                    meta_dict["fk_columns"][fk]["data"] = tuple_to_list(curs.fetchall())
-        return meta_dict
-
-    def get_table_info(self, table: str, batch: int = 1, page_size: int = 3) -> dict:
-        """
-        Table metadata
-
-        :param table: Table name
-        :param batch: Row batch, where each batch will be of size 50 at least
-        :param page_size: Max record per page
-        :return: Metadata dictionary
-        """
-        meta_dict = dict()
-        curs = self.get_cursor
-
-        # Get Column Details
-        column_detail = self.get_table_columns(table, True)
-        meta_dict["view_columns"] = column_detail["view"]
-        meta_dict["insert_columns"] = column_detail["insert"]
-        meta_dict["pk_columns"] = column_detail["pk_columns"]
-        meta_dict["fk_columns"] = column_detail["fk_columns"]
-
-        # Get Table Count
-        curs.execute(
-            """
-            SELECT count(*) FROM {}
-            """.format(table)
-        )
-        meta_dict["table_count"] = int(curs.fetchone()[0])
-
-        # Get rows in batches of 50 records
-        batch_num = (batch if 0 < batch < ceil(meta_dict["table_count"] / page_size) else
-                     1 if batch < 1 else ceil(meta_dict["table_count"] / page_size))
-
-        # Get table data
-        table_data = self.get_table_data(table,
-                                         meta_dict["view_columns"].keys(),
-                                         meta_dict["pk_columns"],
-                                         page_size,
-                                         (batch_num - 1) * page_size)
-        meta_dict["table_data"] = tuple_to_dict([k for k in meta_dict["view_columns"].keys()], table_data)
+        for fk in meta_dict["columns"]:
+            curs.execute(
+                SCT_QUERY_GET_FK_LOOKUP.format(
+                    meta_dict["columns"][fk].get("column"),
+                    meta_dict["columns"][fk].get("table")
+                )
+            )
+            meta_dict["columns"][fk]["data"] = tuple_to_list(curs.fetchall())
 
         return meta_dict
 
@@ -247,7 +248,7 @@ class DbBackEnd:
                 qry_args.append("{}".format(kwargs[col]))
             else:
                 qry_args.append("'{}'".format(kwargs[col]))
-        insert_qry = SCT_QUERY_POSTGRES_INSERT_ROW.format(
+        insert_qry = SCT_QUERY_INSERT_ROW.format(
             table,
             ",".join(table_details["insert"].keys()),
             ",".join(qry_args)
@@ -289,7 +290,7 @@ class DbBackEnd:
                 else:
                     qry_args.append("{}='{}'".format(col_nm, kwargs[col_nm]))
 
-        drop_qry = SCT_QUERY_POSTGRES_DROP_ROW.format(
+        drop_qry = SCT_QUERY_DROP_ROW.format(
             table,
             " and ".join(qry_args)
         )
@@ -337,7 +338,7 @@ class DbBackEnd:
                 else:
                     set_args.append("{}='{}'".format(col, kwargs[col]))
 
-        edit_qry = SCT_QUERY_POSTGRES_UPDATE_ROW.format(
+        edit_qry = SCT_QUERY_UPDATE_ROW.format(
             table,
             ", ".join(set_args),
             " and ".join(qry_args)
@@ -347,6 +348,21 @@ class DbBackEnd:
         # Trigger insert
         curs = self.get_cursor
         curs.execute(edit_qry)
+        self.db_connection.commit()
+
+    def create_audit_table(self, audit_table: str):
+        """
+        Create a Audit table
+
+        :param audit_table: Audit table name
+        :return: None
+        """
+        curs = self.get_cursor
+        query_str = SCT_QUERY_AUDIT_TABLE_CREATION.format(
+            audit_table
+        )
+        print(query_str)
+        curs.execute(query_str)
         self.db_connection.commit()
 
     def get_audits(self, audit_table: str, batch: int = 1, page_size: int = 3) -> dict:
@@ -373,7 +389,7 @@ class DbBackEnd:
         batch_num = (batch if 0 < batch < ceil(meta_dict["audits_count"] / page_size) else
                      1 if batch < 1 else ceil(meta_dict["audits_count"] / page_size))
 
-        adt_qry = SCT_QUERY_POSTGRES_AUDIT_GET.format(audit_table, (batch_num - 1) * page_size, page_size)
+        adt_qry = SCT_QUERY_AUDIT_GET.format(audit_table, (batch_num - 1) * page_size, page_size)
         curs.execute(adt_qry)
 
         audit_columns = ["audit_user", "audit_time", "operation_performed",
@@ -396,7 +412,7 @@ class DbBackEnd:
         :return: None
         """
         curs = self.get_cursor
-        query_str = SCT_QUERY_POSTGRES_AUDIT_PUT.format(
+        query_str = SCT_QUERY_AUDIT_PUT.format(
                 audit_table,
                 audit_user if audit_user else "ANONYMOUS",
                 operation_performed,
@@ -419,7 +435,7 @@ class DbBackEnd:
         # Fetch data
         curs = self.get_cursor
         curs.execute(
-            SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD.format(
+            SCT_QUERY_AUDIT_BULK_LOAD.format(
                 audit_table
             )
         )
@@ -476,7 +492,7 @@ class DbBackEnd:
                             qry_args.append("{}".format(row[c]))
                         else:
                             qry_args.append("'{}'".format(row[c]))
-                    insert_qry = SCT_QUERY_POSTGRES_INSERT_ROW.format(
+                    insert_qry = SCT_QUERY_INSERT_ROW.format(
                         table,
                         ",".join(column_list),
                         ",".join(qry_args)

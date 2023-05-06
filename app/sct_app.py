@@ -15,9 +15,10 @@ from flask_login import (
 )
 
 from app.utilities.sct_env import *
-from app.utilities.sct_db import DbBackEnd
+from app.utilities.databases.sct_db import init_app_database, init_audit_database
 from app.utilities.sct_logging import logger_conf_dict
-from app.routes.sct_routes import define_routes
+from app.routes.sct_routes_api import define_routes_api
+from app.routes.sct_routes_views import define_routes_view
 from app.utilities.sct_security import define_security
 from app.utilities.sct_mail import enable_email_support
 from app.utilities.sct_schedules import sct_scheduled_bulk_loader
@@ -28,23 +29,35 @@ app = Flask(__name__)
 # # Set secret
 app.config.update({'SECRET_KEY': secrets.token_hex(64)})
 CORS(app)
-# # Initialize login manager
-login_manager = LoginManager()
-login_manager.init_app(app)
+
+
+# Logging
+dictConfig(logger_conf_dict)
+
+
+# Database
+init_app_database(app)
+init_audit_database(app)
+
+
+# Download & Upload Setup
 # # Initiate download manager
 flask_excel.init_excel(app)
 # # Initiate upload manager
 files_uploads = UploadSet("files", DATA)
 app.config["UPLOADED_FILES_DEST"] = 'static/uploads'
 configure_uploads(app, files_uploads)
+app.config["SCT_UPLOAD_HANDLER"] = files_uploads
 
 
-# # Initiate scheduler
+# Scheduler
+# # Scheduler Actions
 def sct_scheduled_tasks():
     """SCT Scheduled Tasks"""
-    sct_scheduled_bulk_loader(app, db)
+    sct_scheduled_bulk_loader(app)
 
 
+# # Scheduler Configuration
 class Config:
     """App configuration."""
     sct_sch_cfg = {
@@ -57,26 +70,30 @@ class Config:
     SCHEDULER_API_ENABLED = True
 
 
+# # Scheduler Initiation
 app.config.from_object(Config())
 scheduler = APScheduler()
 scheduler.init_app(app)
 
-# # Initiate mail
+
+# Notification
 if bool(sct_mail_enabled):
     enable_email_support(app)
 
-# Logging
-dictConfig(logger_conf_dict)
 
-# Authentication
+# Security
+# # Initialize login manager
+login_manager = LoginManager()
+login_manager.init_app(app)
+# # Authentication
 define_security(app, login_manager)
 
-# Init Database
-schema = {sct_db_schema, sct_audit_db_schema}
-db = DbBackEnd(sct_db_name, schema, sct_db_user, sct_db_pwd, sct_db_host, sct_db_port)
 
-# Views
-define_routes(app, db, files_uploads)
+# Routes
+# # API
+define_routes_api(app)
+# # Views
+define_routes_view(app)
 
 
 @app.route("/")

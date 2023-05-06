@@ -11,3 +11,4 @@ Flask-Mail
 jinja2
 Sphinx
 build
+pytest
