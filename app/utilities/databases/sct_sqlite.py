@@ -295,7 +295,6 @@ class DbBackEnd:
             table,
             " and ".join(qry_args)
         )
-        print(drop_qry)
 
         # Trigger insert
         curs = self.get_cursor
@@ -346,7 +345,6 @@ class DbBackEnd:
             ", ".join(set_args),
             " and ".join(qry_args)
         )
-        print(edit_qry)
 
         # Trigger insert
         curs = self.get_cursor

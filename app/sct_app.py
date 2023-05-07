@@ -1,8 +1,9 @@
 """
-    app.py
+    sct_app.py
     -------
-    Simple Python Crud Tool - Entrypoint Script
+    Simple Python Crud Tool - App definition
 """
+import os
 from flask import Flask, redirect, url_for
 import flask_excel
 from flask_apscheduler import APScheduler
@@ -23,99 +24,87 @@ from app.utilities.sct_security import define_security
 from app.utilities.sct_mail import enable_email_support
 from app.utilities.sct_schedules import sct_scheduled_bulk_loader
 
-# Create Application
-# # Initiate application
-app = Flask(__name__)
-# # Set secret
-app.config.update({'SECRET_KEY': secrets.token_hex(64)})
-CORS(app)
 
-
-# Logging
-dictConfig(logger_conf_dict)
-
-
-# Database
-init_app_database(app)
-init_audit_database(app)
-
-
-# Download & Upload Setup
-# # Initiate download manager
-flask_excel.init_excel(app)
-# # Initiate upload manager
-files_uploads = UploadSet("files", DATA)
-app.config["UPLOADED_FILES_DEST"] = 'static/uploads'
-configure_uploads(app, files_uploads)
-app.config["SCT_UPLOAD_HANDLER"] = files_uploads
-
-
-# Scheduler
-# # Scheduler Actions
-def sct_scheduled_tasks():
-    """SCT Scheduled Tasks"""
-    sct_scheduled_bulk_loader(app)
-
-
-# # Scheduler Configuration
-class Config:
-    """App configuration."""
-    sct_sch_cfg = {
-        "id": "job1",
-        "func": sct_scheduled_tasks,
-        "trigger": "interval",
-        "seconds": int(sct_scheduler_interval_value)
-    }
-    JOBS = [sct_sch_cfg]
-    SCHEDULER_API_ENABLED = True
-
-
-# # Scheduler Initiation
-app.config.from_object(Config())
-scheduler = APScheduler()
-scheduler.init_app(app)
-
-
-# Notification
-if bool(sct_mail_enabled):
-    enable_email_support(app)
-
-
-# Security
-# # Initialize login manager
-login_manager = LoginManager()
-login_manager.init_app(app)
-# # Authentication
-define_security(app, login_manager)
-
-
-# Routes
-# # API
-define_routes_api(app)
-# # Views
-define_routes_view(app)
-
-
-@app.route("/")
-def home():
-    """
-    Default home route
-
-    :return: SCT Application Home (HTML)
-    """
-    return redirect(url_for('data'))
-
-
-# Init Application
 def init_sct_app():
     """
     Initialize SCT Application
 
     :return: None
     """
+
+    # Create Application
+    # # Initiate application
+    sct_app = Flask(__name__)
+    # # Set secret
+    sct_app.config.update({'SECRET_KEY': secrets.token_hex(64)})
+    CORS(sct_app)
+
+    # Logging
+    dictConfig(logger_conf_dict)
+
+    # Database
+    init_app_database(sct_app)
+    init_audit_database(sct_app)
+
+    # Download & Upload Setup
+    # # Initiate download manager
+    flask_excel.init_excel(sct_app)
+    # # Initiate upload manager
+    files_uploads = UploadSet("files", DATA)
+    sct_app.config["UPLOADED_FILES_DEST"] = 'static/uploads'
+    configure_uploads(sct_app, files_uploads)
+    sct_app.config["SCT_UPLOAD_HANDLER"] = files_uploads
+
+    # Scheduler
+    # # Scheduler Actions
+    def sct_scheduled_tasks():
+        """SCT Scheduled Tasks"""
+        sct_scheduled_bulk_loader(sct_app)
+
+    # # Scheduler Configuration
+    class Config:
+        """App configuration."""
+        sct_sch_cfg = {
+            "id": "job1",
+            "func": sct_scheduled_tasks,
+            "trigger": "interval",
+            "seconds": int(sct_scheduler_interval_value)
+        }
+        JOBS = [sct_sch_cfg]
+        SCHEDULER_API_ENABLED = True
+
+    # # Scheduler Initiation
+    sct_app.config.from_object(Config())
+    scheduler = APScheduler()
+    scheduler.init_app(sct_app)
+
+    # Notification
+    if bool(sct_mail_enabled):
+        enable_email_support(sct_app)
+
+    # Security
+    # # Initialize login manager
+    login_manager = LoginManager()
+    login_manager.init_app(sct_app)
+    # # Authentication
+    define_security(sct_app, login_manager)
+
+    # Routes
+    # # API
+    define_routes_api(sct_app)
+    # # Views
+    # define_routes_view(sct_app)
+
+    # # Home Page
+    # @sct_app.route("/")
+    # def home():
+    #     """
+    #     Default home route
+    #
+    #     :return: SCT Application Home (HTML)
+    #     """
+    #     return redirect(url_for('data'))
+
     scheduler.start()
-    app.run()
+    return sct_app
 
-
-if __name__ == '__main__':
-    init_sct_app()

@@ -4,9 +4,6 @@ import tempfile
 from app.utilities.sct_utils import tuple_to_list
 from app.utilities.databases.sct_sqlite import DbBackEnd
 from app.utilities.sct_env import *
-from app.utilities.databases.sct_sqlite_query import (
-    SCT_QUERY_GET_TABLE_LIST
-)
 
 
 class TestSCTDB(object):
@@ -45,7 +42,7 @@ class TestSCTDB(object):
     @pytest.mark.skip
     def test_table_columns(self):
         dept_col = self.db.get_table_columns("departments")["columns"]
-        # assert list(dept_col.keys()) == ["department_id", "department_type"]
+        assert list(dept_col.keys()) == ["department_id", "department_type"]
 
     @pytest.mark.skip
     def test_table_insert_columns(self):

@@ -122,3 +122,18 @@ sct_mail_password = os.environ.get("SCT_MAIL_PASSWORD", None)
 # # Notification Recipients (Comma Separated List)
 sct_mail_recipients = os.environ.get("SCT_MAIL_RECIPIENTS", None)
 #######################################################################
+
+#######################################################################
+# Test Setup
+is_testing = os.environ.get("SCT_TESTING", None)
+if is_testing and is_testing.lower() == "enabled":
+    print("Testing...")
+    sct_db_type = "sqlite"
+    sct_db_name = ":memory:"
+    sct_table_table_blacklist = "sct_,sqlite_"
+    sct_audit_type = "sqlite"
+    sct_audit_db_name = ":memory:"
+    sct_audit_table_create = "yes"
+    sct_access_anonymous = "ADMIN"
+    sct_mail_enabled = ""
+#######################################################################

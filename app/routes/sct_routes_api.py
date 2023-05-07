@@ -11,6 +11,7 @@ from flask_login import current_user
 
 from app.utilities.sct_env import *
 from app.utilities.sct_security import get_user_role
+from app.utilities.sct_utils import tuple_to_dict
 
 
 def define_routes_api(app):
@@ -24,7 +25,7 @@ def define_routes_api(app):
     db = app.config["SCT_DATA_DB"]
     uploads = app.config["SCT_UPLOAD_HANDLER"]
 
-    @app.route("/api/table/<str: table_name>/<str: page_size>/<str: batch_num>", methods=["GET"])
+    @app.route("/api/table/<table_name>/<page_size>/<batch_num>", methods=["GET"])
     def api_table_data(table_name, page_size, batch_num):
         """
         Get table data
@@ -71,7 +72,7 @@ def define_routes_api(app):
 
         if user_role in ["ADMIN", "OPERATOR", "VIEWER"]:
             try:
-                table_list = db.get_table_list(sct_db_schema)
+                table_list = db.get_table_list(sct_table_table_blacklist, sct_db_schema)
                 app.logger.debug("Table list: {}".format(table_list))
                 result["tables"] = table_list
                 http_status = 200
@@ -84,7 +85,7 @@ def define_routes_api(app):
 
         return jsonify(result), http_status
 
-    @app.route("/api/table_columns/<str: table_name>", methods=["GET"])
+    @app.route("/api/table_columns/<table_name>", methods=["GET"])
     def api_table_columns(table_name):
         """
         Column details for a table
@@ -107,7 +108,7 @@ def define_routes_api(app):
 
         if user_role in ["ADMIN", "OPERATOR", "VIEWER"]:
             try:
-                result["columns"] = db.get_table_columns(table_name)
+                result = db.get_table_columns(table_name)
                 app.logger.debug("Table columns: {}".format(result))
                 http_status = 200
             except Exception as e:
@@ -119,7 +120,7 @@ def define_routes_api(app):
 
         return jsonify(result), http_status
 
-    @app.route("/api/table_pk/<str: table_name>", methods=["GET"])
+    @app.route("/api/table_pk/<table_name>", methods=["GET"])
     def api_table_pk(table_name):
         """
         List of Primary Key columns
@@ -138,11 +139,11 @@ def define_routes_api(app):
             user_name = None
         user_role = get_user_role(user_name)
         app.logger.info("User {} has assigned role {}".format(user_name, user_role))
-        result = {"columns": []}
+        result = dict()
 
         if user_role in ["ADMIN", "OPERATOR", "VIEWER"]:
             try:
-                result["columns"] = db.get_table_pk(table_name)
+                result = db.get_table_pk(table_name)
                 app.logger.debug("Table primary key columns: {}".format(result["columns"]))
                 http_status = 200
             except Exception as e:
@@ -154,7 +155,7 @@ def define_routes_api(app):
 
         return jsonify(result), http_status
 
-    @app.route("/api/table_fk/<str: table_name>", methods=["GET"])
+    @app.route("/api/table_fk/<table_name>", methods=["GET"])
     def api_table_fk(table_name):
         """
         List of foreign key columns
@@ -173,11 +174,11 @@ def define_routes_api(app):
             user_name = None
         user_role = get_user_role(user_name)
         app.logger.info("User {} has assigned role {}".format(user_name, user_role))
-        result = {"columns": []}
+        result = dict()
 
         if user_role in ["ADMIN", "OPERATOR", "VIEWER"]:
             try:
-                result["columns"] = db.get_table_fk(table_name)
+                result = db.get_table_fk(table_name)
                 app.logger.debug("Table foreign key columns: {}".format(result["columns"]))
                 http_status = 200
             except Exception as e:
@@ -189,7 +190,7 @@ def define_routes_api(app):
 
         return jsonify(result), http_status
 
-    @app.route("/api/table_insert_columns/<str: table_name>", methods=["GET"])
+    @app.route("/api/table_insert_columns/<table_name>", methods=["GET"])
     def api_table_insert_columns(table_name):
         """
         List of columns used for insert operation
@@ -208,11 +209,11 @@ def define_routes_api(app):
             user_name = None
         user_role = get_user_role(user_name)
         app.logger.info("User {} has assigned role {}".format(user_name, user_role))
-        result = {"columns": []}
+        result = dict()
 
         if user_role in ["ADMIN", "OPERATOR", "VIEWER"]:
             try:
-                result["columns"] = db.get_table_insert_columns(table_name)
+                result = db.get_table_insert_columns(table_name)
                 app.logger.debug("Table columns used for insert operation: {}".format(result["columns"]))
                 http_status = 200
             except Exception as e:
@@ -224,7 +225,7 @@ def define_routes_api(app):
 
         return jsonify(result), http_status
 
-    @app.route("/api/create_row/<str: table_name>", methods=["GET"])
+    @app.route("/api/create_row/<table_name>", methods=["GET"])
     def api_table_create_row(table_name):
         """
         Create a row
@@ -248,10 +249,10 @@ def define_routes_api(app):
         if user_role in ["ADMIN", "OPERATOR"]:
             try:
                 parm_dict = dict()
-                for column_name in api_table_insert_columns(table_name).get_json()["columns"]:
+                for column_name in db.get_table_insert_columns(table_name)["columns"]:
                     parm_dict[column_name] = request.args.get(column_name)
                 app.logger.info("Insert row detail: {}".format(parm_dict))
-                db.add_table_row(table_name, **parm_dict)
+                db.add_table_record(table_name, **parm_dict)
                 result["record"] = parm_dict
                 http_status = 200
             except Exception as e:
@@ -263,7 +264,7 @@ def define_routes_api(app):
 
         return jsonify(result), http_status
 
-    @app.route("/api/delete_row/<str: table_name>/<int: page_number>/<int: element_id>", methods=["GET"])
+    @app.route("/api/delete_row/<table_name>/<page_number>/<element_id>", methods=["GET"])
     def api_table_delete_row(table_name, page_number, element_id):
         """
         Delete a row
@@ -288,7 +289,15 @@ def define_routes_api(app):
             try:
                 app.logger.info("Dropping row from table {} from page {} element {}".format(
                     table_name, page_number, element_id))
-                result["record"] = db.drop_table_row(table_name, page_number, element_id)
+                offset_value = (int(page_number) - 1) * int(sct_ui_pagesize)
+                col_list = list((db.get_table_columns(table_name)["columns"]).keys())
+                pk_cols = db.get_table_pk(table_name)["columns"]
+                ordered_list = pk_cols if len(pk_cols) else col_list
+                del_row = db.get_table_data(
+                    table_name, col_list, ordered_list, sct_ui_pagesize, offset_value)[int(element_id)]
+                result["record"] = tuple_to_dict(col_list, [del_row])[0]
+
+                db.drop_table_record(table_name, **(result["record"]))
                 http_status = 200
             except Exception as e:
                 app.logger.error("Exception received while dropping record: \n{}".format(e))
@@ -299,7 +308,7 @@ def define_routes_api(app):
 
         return jsonify(result), http_status
 
-    @app.route("/api/edit_row/<str: table_name>/<int: page_number>/<int: element_id>", methods=["GET"])
+    @app.route("/api/edit_row/<table_name>/<page_number>/<element_id>", methods=["GET"])
     def api_table_edit_row(table_name, page_number, element_id):
         """
         Delete a row
@@ -310,7 +319,7 @@ def define_routes_api(app):
 
             { "record": {"col-1": 122, "col-2": "dummy"} }
         """
-        app.logger.info("Adding record to table, user {}".format(current_user.get_id()))
+        app.logger.info("Update record in table, user {}".format(current_user.get_id()))
         if current_user.get_id():
             user_name = current_user.email
             app.logger.info("Email: {}".format(user_name))
@@ -324,25 +333,24 @@ def define_routes_api(app):
             try:
                 app.logger.info("Edit row in table {} from page {} element {}".format(
                     table_name, page_number, element_id))
-                edit_row = db.drop_table_row(table_name, page_number, element_id)
-                http_response = api_table_pk(table_name)
-                if http_response.status == 200:
-                    pk_columns = http_response.get_json()["columns"]
-                else:
-                    raise Exception("Execution in getting primary key for table {}".format(table_name))
-                http_response = api_table_insert_columns(table_name)
-                if http_response.status == 200:
-                    insert_columns = http_response.get_json()["columns"]
-                else:
-                    raise Exception("Execution in getting table({}) columns for insert".format(table_name))
+                offset_value = (int(page_number) - 1) * int(sct_ui_pagesize)
+                col_list = list((db.get_table_columns(table_name)["columns"]).keys())
+                pk_cols = db.get_table_pk(table_name)["columns"]
+                insert_cols = db.get_table_insert_columns(table_name)["columns"]
+
+                ordered_list = pk_cols if len(pk_cols) else col_list
+                edit_row = db.get_table_data(
+                    table_name, col_list, ordered_list, sct_ui_pagesize, offset_value)[int(element_id)]
+                result["record"] = tuple_to_dict(col_list, [edit_row])[0]
+
                 parm_dict = dict()
-                for column_name in insert_columns:
-                    if column_name not in pk_columns and len(request.args.get(column_name)):
+                for column_name in insert_cols:
+                    if column_name not in pk_cols and len(request.args.get(column_name)):
                         parm_dict[column_name] = request.args.get(column_name)
                     else:
-                        parm_dict[column_name] = edit_row(column_name)
+                        parm_dict[column_name] = result["record"][column_name]
                 app.logger.info("Edit row detail: {}".format(parm_dict))
-                db.edit_table_row(table_name, **parm_dict)
+                db.edit_table_record(table_name, **parm_dict)
                 result["record"] = parm_dict
                 http_status = 200
             except Exception as e:
@@ -354,7 +362,7 @@ def define_routes_api(app):
 
         return jsonify(result), http_status
 
-    @app.route("/api/upload/<str: table_name>/<str: file_name>", methods=["GET"])
+    @app.route("/api/upload/<table_name>/<file_name>", methods=["GET"])
     def api_upload(table_name, file_name):
         """
         Upload data file API
@@ -392,7 +400,7 @@ def define_routes_api(app):
 
         return jsonify(result), http_status
 
-    @app.route("/api/download/<str: table_name>", methods=["GET"])
+    @app.route("/api/download/<table_name>", methods=["GET"])
     def api_download(table_name):
         """
         Download data as CSV
