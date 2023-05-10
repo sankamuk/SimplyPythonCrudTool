@@ -340,7 +340,7 @@ $(document).ready(function(){
 
 		  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				{% if logged_in_user and logged_user_role != "NONE" %}
+				{% if logged_user_role != "NONE" %}
 					{% if logged_user_role == "ADMIN" %}
 			  			<li class = "active"><a href="{{ url_for('audit') }}">Audits</a></li>
 					{% else %}
@@ -403,7 +403,7 @@ $(document).ready(function(){
 		  </div>
 		</div>
 	</nav>
-	{% if logged_in_user and logged_user_role != "NONE" %}
+	{% if logged_user_role != "NONE" %}
 		<div class="container">
 			<div class="table-responsive">
 				<div class="table-wrapper">

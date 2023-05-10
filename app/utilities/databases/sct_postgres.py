@@ -8,7 +8,7 @@ import csv
 import psycopg2
 from math import ceil
 from app.utilities.sct_utils import tuple_to_dict, tuple_to_list
-from app.utilities.sct_query import (
+from app.utilities.databases.sct_postgres_query import (
     SCT_QUERY_POSTGRES_GET_FK_DETAIL,
     SCT_QUERY_POSTGRES_GET_FK_LOOKUP,
     SCT_QUERY_POSTGRES_GET_COLMN_DETAIL,
@@ -46,14 +46,12 @@ class DbBackEnd:
         :param host: DB Hostname
         :param port: DB Port
         """
-        if schema is None:
-            schema = ["public"]
         self._con = psycopg2.connect(database=database,
                                      user=user,
                                      password=password,
                                      host=host,
                                      port=port,
-                                     options="-c search_path={}".format(",".join(schema)))
+                                     options="-c search_path={}".format(schema))
 
     def finalize(self, e=None):
         """
@@ -83,20 +81,28 @@ class DbBackEnd:
         """
         return self.db_connection.cursor()
 
-    def get_table_list(self, schema: str = "public") -> list:
+    def get_table_list(self, blk_listed_table: str = "", schema: str = "public") -> list:
         """
         Return list of table name in DB
 
+        :param blk_listed_table: Black Listed Table
         :param schema: DB Schema
         :return: List of Tables
         """
+        black_listed = set()
         curs = self.get_cursor
         curs.execute(
             """
             SELECT table_name FROM information_schema.tables WHERE table_schema = '{}'
             """.format(schema)
         )
-        return tuple_to_list(curs.fetchall())
+        table_list = set(tuple_to_list(curs.fetchall()))
+        for tbl in table_list:
+            for blk_tbl in blk_listed_table.split(","):
+                if len(blk_tbl.strip()) and blk_tbl in tbl:
+                    black_listed.add(tbl)
+
+        return list(table_list.difference(black_listed))
 
     def get_table_data(self, table: str, project_list: list, order_list: list, limit: int, offset: int = 0):
         """
@@ -487,8 +493,3 @@ class DbBackEnd:
 
         self.db_connection.commit()
         return total_rec
-
-
-
-
-
