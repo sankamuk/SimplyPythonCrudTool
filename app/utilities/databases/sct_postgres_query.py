@@ -84,3 +84,15 @@ INSERT INTO {0}(operation_performed, table_name, operation_status, audit_user, o
 SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD = """
 SELECT table_name, operation_status, operation_metadata FROM {} WHERE operation_performed = 'BULK_UPLOAD'
 """
+
+SCT_QUERY_POSTGRES_AUDIT_TABLE_CREATION = """
+create table if not exists governance.sct_audits (
+        audit_id serial PRIMARY KEY,
+        audit_user VARCHAR (100) not null,
+        audit_time timestamp NOT NULL DEFAULT NOW(),
+        operation_performed VARCHAR (100) not null,
+        table_name VARCHAR (100) not null,
+        operation_status VARCHAR (15) not null,
+        operation_metadata VARCHAR (5000)
+);
+"""

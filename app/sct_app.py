@@ -1,5 +1,5 @@
 """
-    app.py
+    sct_app.py
     -------
     Simple Python Crud Tool - Entrypoint Script
 """
@@ -15,7 +15,7 @@ from flask_login import (
 )
 
 from app.utilities.sct_env import *
-from app.utilities.sct_db import DbBackEnd
+from app.utilities.databases.sct_db import init_app_database, init_audit_database
 from app.utilities.sct_logging import logger_conf_dict
 from app.routes.sct_routes import define_routes
 from app.utilities.sct_security import define_security
@@ -37,12 +37,13 @@ flask_excel.init_excel(app)
 files_uploads = UploadSet("files", DATA)
 app.config["UPLOADED_FILES_DEST"] = 'static/uploads'
 configure_uploads(app, files_uploads)
+app.config["SCT_UPLOAD_HANDLER"] = files_uploads
 
 
 # # Initiate scheduler
 def sct_scheduled_tasks():
     """SCT Scheduled Tasks"""
-    sct_scheduled_bulk_loader(app, db)
+    sct_scheduled_bulk_loader(app)
 
 
 class Config:
@@ -72,11 +73,11 @@ dictConfig(logger_conf_dict)
 define_security(app, login_manager)
 
 # Init Database
-schema = {sct_db_schema, sct_audit_db_schema}
-db = DbBackEnd(sct_db_name, schema, sct_db_user, sct_db_pwd, sct_db_host, sct_db_port)
+init_app_database(app)
+init_audit_database(app)
 
 # Views
-define_routes(app, db, files_uploads)
+define_routes(app)
 
 
 @app.route("/")

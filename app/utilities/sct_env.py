@@ -13,6 +13,8 @@ sct_app_secret = os.environ.get("SCT_APP_SECRET", "somenath@the@boss")
 
 #######################################################################
 # Database Related
+# # Database Type (postgres, sqlite)
+sct_db_type = os.environ.get("SCT_DB_TYPE", "postgres")
 # # Database
 sct_db_name = os.environ.get("SCT_DB_NAME", "default")
 # # Schema
@@ -30,7 +32,7 @@ sct_table_auto_populated_column_comment = "NO_DIRECT_UPDATE"
 # # Table columns to be available in lookup view for insert/updated in referred table
 sct_table_referenced_column_in_lookup_view = "IS_LOOKED_UP"
 # # Table to be blacklisted
-sct_table_table_blacklist = os.environ.get("SCT_DB_TABLE_BLACKLIST", "")
+sct_table_table_blacklist = os.environ.get("SCT_DB_TABLE_BLACKLIST", "sct_,sqlite_")
 #######################################################################
 
 #######################################################################
@@ -45,12 +47,24 @@ sct_ui_upload_size = int(os.environ.get("SCT_UI_UPLOAD_SIZE", "500"))
 
 #######################################################################
 # Audit Related
-# # Audit database
-sct_audit_type = os.environ.get("SCT_AUDIT_TYPE", "db")
+# # Audit database (postgres, sqlite)
+sct_audit_type = os.environ.get("SCT_AUDIT_TYPE", "sqlite")
+# # Database
+sct_audit_db_name = os.environ.get("SCT_AUDIT_DB_NAME", ":memory:")
 # # Audit schema
-sct_audit_db_schema = os.environ.get("SCT_AUDIT_DB_SCHEMA", "governance")
+sct_audit_db_schema = os.environ.get("SCT_AUDIT_DB_SCHEMA", "")
+# # Database user
+sct_audit_db_user = os.environ.get("SCT_AUDIT_DB_USER", "")
+# # Database host
+sct_audit_db_host = os.environ.get("SCT_AUDIT_DB_HOST", "")
+# # Database port
+sct_audit_db_port = os.environ.get("SCT_AUDIT_DB_PORT", "")
+# # Database user password
+sct_audit_db_pwd = os.environ.get("SCT_AUDIT_DB_PWD", "")
 # # Audit table
 sct_audit_db_table = os.environ.get("SCT_AUDIT_DB_TABLE", "sct_audits")
+# # Create audit table
+sct_audit_table_create = os.environ.get("SCT_AUDIT_TABLE_CREATE", "yes")
 #######################################################################
 
 #######################################################################
@@ -107,4 +121,19 @@ sct_mail_user = os.environ.get("SCT_MAIL_USERNAME", None)
 sct_mail_password = os.environ.get("SCT_MAIL_PASSWORD", None)
 # # Notification Recipients (Comma Separated List)
 sct_mail_recipients = os.environ.get("SCT_MAIL_RECIPIENTS", None)
+#######################################################################
+
+#######################################################################
+# Test Setup
+is_testing = os.environ.get("SCT_TESTING", None)
+if is_testing and is_testing.lower() == "enabled":
+    print("Testing...")
+    sct_db_type = "sqlite"
+    sct_db_name = ":memory:"
+    sct_table_table_blacklist = "sct_,sqlite_"
+    sct_audit_type = "sqlite"
+    sct_audit_db_name = ":memory:"
+    sct_audit_table_create = "yes"
+    sct_access_anonymous = "ADMIN"
+    sct_mail_enabled = ""
 #######################################################################

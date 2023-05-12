@@ -15,15 +15,17 @@ from app.utilities.sct_security import get_user_role
 from app.utilities.sct_mail import send_mail
 
 
-def define_routes(app, db, uploads):
+def define_routes(app):
     """
     Application Routes
 
     :param app: Flask application object
-    :param db: Database Interface Object <DbBackEnd>
-    :param uploads: File upload handler
     :return: None
     """
+
+    db = app.config["SCT_DATA_DB"]
+    audit_db = app.config["SCT_AUDIT_DB"]
+    uploads = app.config["SCT_UPLOAD_HANDLER"]
 
     @app.route("/data", methods=["GET"])
     def data():
@@ -42,21 +44,21 @@ def define_routes(app, db, uploads):
         user_role = get_user_role(user_name)
         app.logger.info("User {} has assigned role {}".format(user_name, user_role))
 
-        table_list = db.get_table_list(sct_db_schema)
+        table_list = db.get_table_list(sct_table_table_blacklist, sct_db_schema)
         app.logger.debug("Table list: {}".format(table_list))
 
         table_name = request.args.get("table_name") if request.args.get("table_name") else table_list[0]
         page_num = int(request.args.get("page_num")) if request.args.get("page_num") else 1
         app.logger.info("Dataset - table_name = {}, page_num = {}".format(table_name, page_num))
 
-        table_details = db.get_table_info(table_name, page_num, sct_ui_pagesize)
-        app.logger.debug("Table details: {}".format(table_details))
+        table_details = db.get_table_info(table_name, page_num, int(sct_ui_pagesize))
+        app.logger.info("Table details: {}".format(table_details))
 
         current_pg = (page_num if 0 < page_num <= ceil(table_details["table_count"] / sct_ui_pagesize) else
                       1 if page_num < 1 else ceil(table_details["table_count"] / sct_ui_pagesize))
         app.logger.info("Current Page: {}".format(current_pg))
 
-        db.add_audit(sct_audit_db_table, user_name, "READ_TABLE", table_name, "SUCCESS", {
+        audit_db.add_audit(sct_audit_db_table, user_name, "READ_TABLE", table_name, "SUCCESS", {
             "page_num": page_num,
             "current_page": current_pg,
             "table_count": table_details["table_count"]
@@ -93,19 +95,19 @@ def define_routes(app, db, uploads):
         user_role = get_user_role(user_name)
         app.logger.info("User {} has assigned role {}".format(user_name, user_role))
 
-        table_list = db.get_table_list(sct_db_schema)
+        table_list = db.get_table_list(sct_table_table_blacklist, sct_db_schema)
         app.logger.debug("Table list: {}".format(table_list))
 
         page_num = int(request.args.get("page_num")) if request.args.get("page_num") else 1
         app.logger.info("Dataset - table_name = {}, page_num = {}".format(sct_audit_db_table, page_num))
 
-        audit_details = db.get_audits(sct_audit_db_table, page_num, sct_ui_pagesize)
+        audit_details = audit_db.get_audits(sct_audit_db_table, page_num, sct_ui_pagesize)
         app.logger.debug("Audits: {}".format(audit_details))
         current_pg = (page_num if 0 < page_num <= ceil(audit_details["audits_count"] / sct_ui_pagesize) else
                       1 if page_num < 1 else ceil(audit_details["audits_count"] / sct_ui_pagesize))
         app.logger.info("Current Page: {}".format(current_pg))
 
-        db.add_audit(sct_audit_db_table, user_name, "READ_AUDIT", sct_audit_db_table, "SUCCESS", {
+        audit_db.add_audit(sct_audit_db_table, user_name, "READ_AUDIT", sct_audit_db_table, "SUCCESS", {
             "page_num": page_num,
             "current_page": current_pg,
             "audit_count": audit_details["audits_count"]
@@ -152,7 +154,7 @@ def define_routes(app, db, uploads):
         db.add_table_record(table_name, **parm_dict)
         app.logger.info("Successfully added record.")
 
-        db.add_audit(sct_audit_db_table, user_name, "ADD_ROW", table_name, "SUCCESS", {
+        audit_db.add_audit(sct_audit_db_table, user_name, "ADD_ROW", table_name, "SUCCESS", {
             "record_detail": parm_dict
         })
         return redirect(url_for('data', table_name=table_name))
@@ -189,7 +191,7 @@ def define_routes(app, db, uploads):
         db.drop_table_record(table_name, **rec_to_delete)
         app.logger.info("Successfully deleted record.")
 
-        db.add_audit(sct_audit_db_table, user_name, "DELETE_ROW", table_name, "SUCCESS", {
+        audit_db.add_audit(sct_audit_db_table, user_name, "DELETE_ROW", table_name, "SUCCESS", {
             "record_deleted": rec_to_delete
         })
         return redirect(url_for('data', table_name=table_name))
@@ -237,7 +239,7 @@ def define_routes(app, db, uploads):
         db.edit_table_record(table_name, **parm_dict)
         app.logger.info("Successfully updated record.")
 
-        db.add_audit(sct_audit_db_table, user_name, "UPDATE_ROW", table_name, "SUCCESS", {
+        audit_db.add_audit(sct_audit_db_table, user_name, "UPDATE_ROW", table_name, "SUCCESS", {
             "record_before": rec_to_edit,
             "record_after": parm_dict
         })
@@ -273,7 +275,7 @@ def define_routes(app, db, uploads):
         uploads.save(request.files["file"], name=file_name)
         app.logger.info("Uploaded file saved as {}".format(file_name))
 
-        db.add_audit(sct_audit_db_table, user_name, "BULK_UPLOAD", table_name, "UPLOADED", {
+        audit_db.add_audit(sct_audit_db_table, user_name, "BULK_UPLOAD", table_name, "UPLOADED", {
             "file_name": file_name
         })
         return redirect(url_for('data', table_name=table_name))
@@ -322,7 +324,7 @@ def define_routes(app, db, uploads):
                                              table_name,
                                              datetime.now().strftime("%Y%m%d_%H%M"))
         app.logger.info("Downloaded file name {}".format(file_name))
-        db.add_audit(sct_audit_db_table, user_name, op_type, table_name, "SUCCESS", {
+        audit_db.add_audit(sct_audit_db_table, user_name, op_type, table_name, "SUCCESS", {
             "file_name": file_name,
             "total_rows": len(download_data)
         })
