@@ -51,8 +51,8 @@ def define_routes(app):
         page_num = int(request.args.get("page_num")) if request.args.get("page_num") else 1
         app.logger.info("Dataset - table_name = {}, page_num = {}".format(table_name, page_num))
 
-        table_details = db.get_table_info(table_name, page_num, sct_ui_pagesize)
-        app.logger.debug("Table details: {}".format(table_details))
+        table_details = db.get_table_info(table_name, page_num, int(sct_ui_pagesize))
+        app.logger.info("Table details: {}".format(table_details))
 
         current_pg = (page_num if 0 < page_num <= ceil(table_details["table_count"] / sct_ui_pagesize) else
                       1 if page_num < 1 else ceil(table_details["table_count"] / sct_ui_pagesize))

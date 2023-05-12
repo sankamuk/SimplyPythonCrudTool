@@ -5,21 +5,20 @@
 """
 import json
 import csv
-import psycopg2
+import mysql.connector
 from math import ceil
 from app.utilities.sct_utils import tuple_to_dict, tuple_to_list
-from app.utilities.databases.sct_postgres_query import (
-    SCT_QUERY_POSTGRES_GET_FK_DETAIL,
-    SCT_QUERY_POSTGRES_GET_FK_LOOKUP,
-    SCT_QUERY_POSTGRES_GET_COLMN_DETAIL,
-    SCT_QUERY_POSTGRES_GET_PK_DETAIL,
-    SCT_QUERY_POSTGRES_INSERT_ROW,
-    SCT_QUERY_POSTGRES_DROP_ROW,
-    SCT_QUERY_POSTGRES_UPDATE_ROW,
-    SCT_QUERY_POSTGRES_AUDIT_GET,
-    SCT_QUERY_POSTGRES_AUDIT_PUT,
-    SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD,
-    SCT_QUERY_POSTGRES_AUDIT_TABLE_CREATION
+from app.utilities.databases.sct_mysql_query import (
+    SCT_QUERY_MYSQL_GET_FK_DETAIL,
+    SCT_QUERY_MYSQL_GET_FK_LOOKUP,
+    SCT_QUERY_MYSQL_GET_COLMN_DETAIL,
+    SCT_QUERY_MYSQL_INSERT_ROW,
+    SCT_QUERY_MYSQL_DROP_ROW,
+    SCT_QUERY_MYSQL_UPDATE_ROW,
+    SCT_QUERY_MYSQL_AUDIT_GET,
+    SCT_QUERY_MYSQL_AUDIT_PUT,
+    SCT_QUERY_MYSQL_AUDIT_BULK_LOAD,
+    SCT_QUERY_MYSQL_AUDIT_TABLE_CREATION
 )
 
 
@@ -33,10 +32,10 @@ class DbBackEnd:
     def __init__(self,
                  database: str = "default",
                  schema=None,
-                 user: str = "postgres",
-                 password: str = "postgres",
+                 user: str = "mysql",
+                 password: str = "mysql",
                  host: str = "localhost",
-                 port: str = "5432"):
+                 port: str = "3306"):
         """
         DbBackEnd constructor
 
@@ -47,12 +46,11 @@ class DbBackEnd:
         :param host: DB Hostname
         :param port: DB Port
         """
-        self._con = psycopg2.connect(database=database,
-                                     user=user,
-                                     password=password,
-                                     host=host,
-                                     port=port,
-                                     options="-c search_path={}".format(schema))
+        self._con = mysql.connector.connect(database=database,
+                                            user=user,
+                                            password=password,
+                                            host=host,
+                                            port=port)
 
     def finalize(self, e=None):
         """
@@ -92,11 +90,7 @@ class DbBackEnd:
         """
         black_listed = set()
         curs = self.get_cursor
-        curs.execute(
-            """
-            SELECT table_name FROM information_schema.tables WHERE table_schema = '{}'
-            """.format(schema)
-        )
+        curs.execute("show tables")
         table_list = set(tuple_to_list(curs.fetchall()))
         for tbl in table_list:
             for blk_tbl in blk_listed_table.split(","):
@@ -117,17 +111,18 @@ class DbBackEnd:
         :return: List of rows
         """
         curs = self.get_cursor
-        curs.execute(
-            """
-            SELECT {} FROM {} ORDER BY {} OFFSET {} LIMIT {}
+        print(offset)
+        sql_qry = """
+            SELECT {} FROM {} ORDER BY {} LIMIT {} OFFSET {}
             """.format(
                 ",".join(project_list),
                 table,
                 ",".join(order_list),
-                offset,
-                limit
+                limit,
+                offset
             )
-        )
+        print(sql_qry)
+        curs.execute(sql_qry)
         return curs.fetchall()
 
     def get_table_columns(self, table: str, load_fk_data: bool = False) -> dict:
@@ -142,29 +137,26 @@ class DbBackEnd:
         meta_dict["view"] = dict()
         meta_dict["insert"] = dict()
         meta_dict["fk_columns"] = dict()
+        meta_dict["pk_columns"] = []
         curs = self.get_cursor
-
-        # Get Table Primary Keys
-        curs.execute(
-            SCT_QUERY_POSTGRES_GET_PK_DETAIL.format(table)
-        )
-        meta_dict["pk_columns"] = [cd[0] for cd in curs.fetchall()]
 
         # Get Column List
         curs.execute(
-            SCT_QUERY_POSTGRES_GET_COLMN_DETAIL.format(table)
+            SCT_QUERY_MYSQL_GET_COLMN_DETAIL.format(table)
         )
         for cd in curs.fetchall():
-            col_nm = cd[1]
+            col_nm = cd[0]
             meta_dict["view"][col_nm] = {
-                "type": cd[3],
-                "description": cd[2],
-                "length": cd[4]
+                "type": cd[1],
+                "description": cd[8],
+                "length": 0
             }
-            if col_nm in meta_dict["pk_columns"] and cd[5] and "nextval" in cd[5]:
+            if "PRI" in cd[4]:
+                meta_dict["pk_columns"].append(col_nm)
+            if "PRI" in cd[4] and cd[6] and "auto_increment" in cd[6]:
                 # print("Primary key auto-generate column {}".format(col_nm))
                 pass
-            elif cd[2] and "not updatable" in (cd[2]).lower():
+            elif cd[8] and "not updatable" in (str(cd[8])).lower():
                 # print("Non updatable column {}".format(col_nm))
                 pass
             else:
@@ -175,18 +167,18 @@ class DbBackEnd:
                 }
 
             # Get Table Foreign Keys
-            curs.execute(SCT_QUERY_POSTGRES_GET_FK_DETAIL)
+            curs.execute(SCT_QUERY_MYSQL_GET_FK_DETAIL.format(table))
             for fkd in curs.fetchall():
-                if fkd[2] == table:
-                    meta_dict["fk_columns"][fkd[3]] = {
-                        "table": fkd[4],
-                        "column": fkd[5],
-                        "data": []
-                    }
+                meta_dict["fk_columns"][fkd[1]] = {
+                    "table": fkd[3],
+                    "column": fkd[4],
+                    "data": []
+                }
+
             if load_fk_data:
                 for fk in meta_dict["fk_columns"]:
                     curs.execute(
-                        SCT_QUERY_POSTGRES_GET_FK_LOOKUP.format(
+                        SCT_QUERY_MYSQL_GET_FK_LOOKUP.format(
                             meta_dict["fk_columns"][fk].get("column"),
                             meta_dict["fk_columns"][fk].get("table")
                         )
@@ -230,7 +222,7 @@ class DbBackEnd:
                                          meta_dict["view_columns"].keys(),
                                          meta_dict["pk_columns"],
                                          page_size,
-                                         (batch_num - 1) * page_size)
+                                         page_size * (batch_num - 1))
         meta_dict["table_data"] = tuple_to_dict([k for k in meta_dict["view_columns"].keys()], table_data)
 
         return meta_dict
@@ -254,7 +246,7 @@ class DbBackEnd:
                 qry_args.append("{}".format(kwargs[col]))
             else:
                 qry_args.append("'{}'".format(kwargs[col]))
-        insert_qry = SCT_QUERY_POSTGRES_INSERT_ROW.format(
+        insert_qry = SCT_QUERY_MYSQL_INSERT_ROW.format(
             table,
             ",".join(table_details["insert"].keys()),
             ",".join(qry_args)
@@ -277,26 +269,29 @@ class DbBackEnd:
         # Query preparation
         table_details = self.get_table_columns(table)
         qry_args = []
+
         if len(table_details["pk_columns"]):
             for col_nm in table_details["pk_columns"]:
-                if (("int" in table_details["view"][col_nm]["type"] and
-                     "point" not in table_details["view"][col_nm]["type"]) or
-                        ("double" in table_details["view"][col_nm]["type"] or
-                         "numeric" in table_details["view"][col_nm]["type"])):
+                col_type = str(table_details["view"][col_nm]["type"])
+                if (("int" in col_type and
+                     "point" not in col_type) or
+                        ("double" in col_type or
+                         "numeric" in col_type)):
                     qry_args.append("{}={}".format(col_nm, kwargs[col_nm]))
                 else:
                     qry_args.append("{}='{}'".format(col_nm, kwargs[col_nm]))
         else:
             for col_nm in table_details["view"].keys():
-                if (("int" in table_details["view"][col_nm]["type"] and
-                     "point" not in table_details["view"][col_nm]["type"]) or
-                        ("double" in table_details["view"][col_nm]["type"] or
-                         "numeric" in table_details["view"][col_nm]["type"])):
+                col_type = str(table_details["view"][col_nm]["type"])
+                if (("int" in col_type and
+                     "point" not in col_type) or
+                        ("double" in col_type or
+                         "numeric" in col_type)):
                     qry_args.append("{}={}".format(col_nm, kwargs[col_nm]))
                 else:
                     qry_args.append("{}='{}'".format(col_nm, kwargs[col_nm]))
 
-        drop_qry = SCT_QUERY_POSTGRES_DROP_ROW.format(
+        drop_qry = SCT_QUERY_MYSQL_DROP_ROW.format(
             table,
             " and ".join(qry_args)
         )
@@ -344,7 +339,7 @@ class DbBackEnd:
                 else:
                     set_args.append("{}='{}'".format(col, kwargs[col]))
 
-        edit_qry = SCT_QUERY_POSTGRES_UPDATE_ROW.format(
+        edit_qry = SCT_QUERY_MYSQL_UPDATE_ROW.format(
             table,
             ", ".join(set_args),
             " and ".join(qry_args)
@@ -364,7 +359,7 @@ class DbBackEnd:
         :return: None
         """
         curs = self.get_cursor
-        query_str = SCT_QUERY_POSTGRES_AUDIT_TABLE_CREATION.format(
+        query_str = SCT_QUERY_MYSQL_AUDIT_TABLE_CREATION.format(
             audit_table
         )
 
@@ -395,7 +390,7 @@ class DbBackEnd:
         batch_num = (batch if 0 < batch < ceil(meta_dict["audits_count"] / page_size) else
                      1 if batch < 1 else ceil(meta_dict["audits_count"] / page_size))
 
-        adt_qry = SCT_QUERY_POSTGRES_AUDIT_GET.format(audit_table, (batch_num - 1) * page_size, page_size)
+        adt_qry = SCT_QUERY_MYSQL_AUDIT_GET.format(audit_table, page_size, (batch_num - 1) * page_size)
         curs.execute(adt_qry)
 
         audit_columns = ["audit_user", "audit_time", "operation_performed",
@@ -418,14 +413,14 @@ class DbBackEnd:
         :return: None
         """
         curs = self.get_cursor
-        query_str = SCT_QUERY_POSTGRES_AUDIT_PUT.format(
-                audit_table,
-                audit_user if audit_user else "ANONYMOUS",
-                operation_performed,
-                table_name,
-                status,
-                json.dumps(operation_metadata)
-            )
+        query_str = SCT_QUERY_MYSQL_AUDIT_PUT.format(
+            audit_table,
+            audit_user if audit_user else "ANONYMOUS",
+            operation_performed,
+            table_name,
+            status,
+            json.dumps(operation_metadata)
+        )
         print(query_str)
         curs.execute(query_str)
         self.db_connection.commit()
@@ -441,7 +436,7 @@ class DbBackEnd:
         # Fetch data
         curs = self.get_cursor
         curs.execute(
-            SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD.format(
+            SCT_QUERY_MYSQL_AUDIT_BULK_LOAD.format(
                 audit_table
             )
         )
@@ -482,7 +477,7 @@ class DbBackEnd:
         table_details = self.get_table_columns(table)
 
         # Read in CSV
-        with open(file_path, mode='r')as file:
+        with open(file_path, mode='r') as file:
             csv_file = csv.reader(file)
             column_list = []
             for i, row in enumerate(csv_file):
@@ -498,7 +493,7 @@ class DbBackEnd:
                             qry_args.append("{}".format(row[c]))
                         else:
                             qry_args.append("'{}'".format(row[c]))
-                    insert_qry = SCT_QUERY_POSTGRES_INSERT_ROW.format(
+                    insert_qry = SCT_QUERY_MYSQL_INSERT_ROW.format(
                         table,
                         ",".join(column_list),
                         ",".join(qry_args)

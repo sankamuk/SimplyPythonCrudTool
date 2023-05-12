@@ -59,6 +59,7 @@ def init_audit_database(app):
         app.config["SCT_AUDIT_DB"] = db
 
     if sct_audit_table_create.lower() == "yes":
+        app.logger.info("Creating audit table {}".format(sct_audit_db_table))
         (app.config["SCT_AUDIT_DB"]).create_audit_table(sct_audit_db_table)
 
     app.logger.info("Successfully initiated {} audit DB.".format(sct_db_type))
