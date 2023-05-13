@@ -18,7 +18,8 @@ from app.utilities.databases.sct_mysql_query import (
     SCT_QUERY_MYSQL_AUDIT_GET,
     SCT_QUERY_MYSQL_AUDIT_PUT,
     SCT_QUERY_MYSQL_AUDIT_BULK_LOAD,
-    SCT_QUERY_MYSQL_AUDIT_TABLE_CREATION
+    SCT_QUERY_MYSQL_AUDIT_TABLE_CREATION,
+    SCT_QUERY_MYSQL_AUDIT_SEARCH
 )
 
 
@@ -111,7 +112,6 @@ class DbBackEnd:
         :return: List of rows
         """
         curs = self.get_cursor
-        print(offset)
         sql_qry = """
             SELECT {} FROM {} ORDER BY {} LIMIT {} OFFSET {}
             """.format(
@@ -121,7 +121,35 @@ class DbBackEnd:
                 limit,
                 offset
             )
-        print(sql_qry)
+
+        curs.execute(sql_qry)
+        return curs.fetchall()
+
+    def search_table_data(self, table: str, project_list: list, order_list: list,
+                          search_con, limit: int, offset: int = 0):
+        """
+        Search data for a table
+
+        :param table: Table name
+        :param project_list: List of columns to project
+        :param order_list: List of columns to order data by
+        :param search_con: Searched Condition
+        :param limit: Max rows fetched
+        :param offset: Row batch, where each batch will be of size 50 at least
+        :return: List of rows
+        """
+        curs = self.get_cursor
+        sql_qry = """
+            SELECT {} FROM {} WHERE {} ORDER BY {} LIMIT {} OFFSET {}
+            """.format(
+            ",".join(project_list),
+            table,
+            search_con,
+            ",".join(order_list),
+            limit,
+            offset
+        )
+
         curs.execute(sql_qry)
         return curs.fetchall()
 
@@ -154,10 +182,8 @@ class DbBackEnd:
             if "PRI" in cd[4]:
                 meta_dict["pk_columns"].append(col_nm)
             if "PRI" in cd[4] and cd[6] and "auto_increment" in cd[6]:
-                # print("Primary key auto-generate column {}".format(col_nm))
                 pass
             elif cd[8] and "not updatable" in (str(cd[8])).lower():
-                # print("Non updatable column {}".format(col_nm))
                 pass
             else:
                 meta_dict["insert"][col_nm] = {
@@ -227,6 +253,65 @@ class DbBackEnd:
 
         return meta_dict
 
+    def search_table_info(self, table: str,
+                          search_col, search_op, search_val, batch: int = 1, page_size: int = 3) -> dict:
+        """
+        Search metadata
+
+        :param table: Table name
+        :param search_col: Searched Table Column
+        :param search_op: Search Operation
+        :param search_val: Search Value
+        :param batch: Row batch, where each batch will be of size 50 at least
+        :param page_size: Max record per page
+        :return: Metadata dictionary
+        """
+        meta_dict = dict()
+        curs = self.get_cursor
+
+        # Get Column Details
+        column_detail = self.get_table_columns(table, True)
+        meta_dict["view_columns"] = column_detail["view"]
+        meta_dict["insert_columns"] = column_detail["insert"]
+        meta_dict["pk_columns"] = column_detail["pk_columns"]
+        meta_dict["fk_columns"] = column_detail["fk_columns"]
+
+        # Search condition
+        col_type = (str(meta_dict["view_columns"][search_col].get("type"))).lower()
+        if search_op == 'like':
+            if ("int" in col_type and "point" not in col_type) or ("double" in col_type or "numeric" in col_type):
+                search_cond = "{} = {}".format(search_col, search_val)
+            else:
+                search_cond = "{} {} '%{}%'".format(search_col, search_op, search_val)
+        else:
+            if ("int" in col_type and "point" not in col_type) or ("double" in col_type or "numeric" in col_type):
+                search_cond = "{} {} {}".format(search_col, search_op, search_val)
+            else:
+                search_cond = "{} {} '{}'".format(search_col, search_op, search_val)
+
+        # Get Table Count
+        if len(search_cond):
+            search_qry = "SELECT count(*) FROM {} WHERE {}".format(table, search_cond)
+        else:
+            search_qry = "SELECT count(*) FROM {}".format(table)
+        curs.execute(search_qry)
+        meta_dict["table_count"] = int(curs.fetchone()[0])
+
+        # Get rows in batches of 50 records
+        batch_num = (batch if 0 < batch < ceil(meta_dict["table_count"] / page_size) else
+                     1 if batch < 1 else ceil(meta_dict["table_count"] / page_size))
+
+        # Get table data
+        table_data = self.search_table_data(table,
+                                            meta_dict["view_columns"].keys(),
+                                            meta_dict["pk_columns"],
+                                            search_cond,
+                                            page_size,
+                                            page_size * (batch_num - 1))
+        meta_dict["table_data"] = tuple_to_dict([k for k in meta_dict["view_columns"].keys()], table_data)
+
+        return meta_dict
+
     def add_table_record(self, table: str, **kwargs):
         """
         Add row to table
@@ -251,7 +336,6 @@ class DbBackEnd:
             ",".join(table_details["insert"].keys()),
             ",".join(qry_args)
         )
-        print(insert_qry)
 
         # Trigger insert
         curs = self.get_cursor
@@ -295,7 +379,6 @@ class DbBackEnd:
             table,
             " and ".join(qry_args)
         )
-        print(drop_qry)
 
         # Trigger insert
         curs = self.get_cursor
@@ -344,7 +427,6 @@ class DbBackEnd:
             ", ".join(set_args),
             " and ".join(qry_args)
         )
-        print(edit_qry)
 
         # Trigger insert
         curs = self.get_cursor
@@ -399,6 +481,59 @@ class DbBackEnd:
 
         return meta_dict
 
+    def search_audits(self, audit_table: str, audit_search_col: str, audit_search_op: str, audit_search_val: str,
+                      batch: int = 1, page_size: int = 3) -> dict:
+        """
+        Search Audits
+
+        :param audit_table: Audit table name
+        :param audit_search_col: Audit table search column name
+        :param audit_search_op: Audit table search operator
+        :param audit_search_val: Audit table search value
+        :param batch: Row batch, where each batch will be of size 50 at least
+        :param page_size: Max record per page
+        :return: Audit data
+        """
+        curs = self.get_cursor
+        meta_dict = dict()
+
+        # Search condition
+        if audit_search_op == 'like':
+            if audit_search_col in ["audit_id"]:
+                search_cond = "{} = {}".format(audit_search_col, audit_search_val)
+            else:
+                search_cond = "{} {} '%{}%'".format(audit_search_col, audit_search_op, audit_search_val)
+        else:
+            if audit_search_col in ["audit_id"]:
+                search_cond = "{} {} {}".format(audit_search_col, audit_search_op, audit_search_val)
+            else:
+                search_cond = "{} {} '{}'".format(audit_search_col, audit_search_op, audit_search_val)
+
+        # Get Table Count
+        if len(search_cond):
+            search_qry = "SELECT count(*) FROM {} WHERE {}".format(audit_table, search_cond)
+        else:
+            search_qry = "SELECT count(*) FROM {}".format(audit_table)
+        curs.execute(search_qry)
+        meta_dict["audits_count"] = int(curs.fetchone()[0])
+
+        # Get rows in batches of 50 records
+        batch_num = (batch if 0 < batch < ceil(meta_dict["audits_count"] / page_size) else
+                     1 if batch < 1 else ceil(meta_dict["audits_count"] / page_size))
+
+        if len(search_cond):
+            adt_qry = SCT_QUERY_MYSQL_AUDIT_SEARCH.format(
+                audit_table, search_cond, page_size, (batch_num - 1) * page_size)
+        else:
+            adt_qry = SCT_QUERY_MYSQL_AUDIT_GET.format(audit_table, page_size, (batch_num - 1) * page_size)
+        curs.execute(adt_qry)
+
+        audit_columns = ["audit_user", "audit_time", "operation_performed",
+                         "table_name", "operation_status", "operation_metadata"]
+        meta_dict["audits_data"] = tuple_to_dict(audit_columns, curs.fetchall())
+
+        return meta_dict
+
     def add_audit(self, audit_table: str, status: str, audit_user: str, operation_performed: str,
                   table_name: str, operation_metadata: str):
         """
@@ -421,7 +556,7 @@ class DbBackEnd:
             status,
             json.dumps(operation_metadata)
         )
-        print(query_str)
+
         curs.execute(query_str)
         self.db_connection.commit()
 
@@ -498,7 +633,7 @@ class DbBackEnd:
                         ",".join(column_list),
                         ",".join(qry_args)
                     )
-                    print(insert_qry)
+
                     curs.execute(insert_qry)
                     total_rec = total_rec + 1
 
