@@ -96,3 +96,9 @@ create table if not exists governance.sct_audits (
         operation_metadata VARCHAR (5000)
 );
 """
+
+SCT_QUERY_POSTGRES_AUDIT_SEARCH = """
+SELECT audit_user, audit_time, operation_performed, table_name, operation_status, operation_metadata FROM {}
+WHERE {}
+ORDER BY audit_id OFFSET {} LIMIT {}
+"""

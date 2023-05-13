@@ -98,6 +98,15 @@ def init_sct_app():
     :return: None
     """
     scheduler.start()
+
+    # Setup test environment
+    if is_testing and is_testing.lower() == "enabled":
+        curs = (app.config["SCT_DATA_DB"]).get_cursor
+        with open("test/employee_setup_script_sqlite.sql") as sc:
+            sql_sc = sc.read()
+        curs.executescript(sql_sc)
+        (app.config["SCT_DATA_DB"]).db_connection.commit()
+
     app.run()
 
 

@@ -18,6 +18,8 @@ The application is configurable with environment variable. Below we present the 
 
     - SCT_DB_PWD
 
+    - SCT_ACCESS_ANONYMOUS_ROLE
+
     With this in place your basic CRUD operation will be **ON**.
 
 
@@ -28,15 +30,16 @@ Below is the component wise configurations.
 
 
 ==========================  =====================================================================================================================================
-Config         Remark
+Config                      Remark
 ==========================  =====================================================================================================================================
+SCT_DB_TYPE                 Database (Options: mysql, postgres, sqlite)
 SCT_DB_HOST                 Database host
 SCT_DB_PORT                 Database port
 SCT_DB_NAME                 Database name
 SCT_DB_SCHEMA               Database schema
 SCT_DB_USER                 Database user
 SCT_DB_PWD                  Database user password
-SCT_DB_TABLE_BLACKLIST      Regular expression which can be use to restrict access to one or more table using this application, blank string means no blacklist
+SCT_DB_TABLE_BLACKLIST      Comma separated pattern in name for table that need not be considered to be viewed by this tool
 ==========================  =====================================================================================================================================
 
 
@@ -44,7 +47,7 @@ SCT_DB_TABLE_BLACKLIST      Regular expression which can be use to restrict acce
 
 
 ==========================  ===================================================
-Config         Remark
+Config                      Remark
 ==========================  ===================================================
 SCT_UI_PAGESIZE             Max record to show per page
 SCT_UI_DOWNLOAD_SIZE        Max record in downloaded CSV
@@ -53,9 +56,8 @@ SCT_UI_UPLOAD_SIZE          Max record that can be appended uploaded feature
 
 
 **Audit Setup**: Currently only RDBMS based audit is supported.
-                 Currently also the Audit table need to be available in same DB instance like primary data but it can reside on different schema.
 
-Audit table need to be available before starting tool::
+Audit table can be made available before starting tool::
 
     create table governance.sct_audits (
         audit_id serial PRIMARY KEY,
@@ -68,13 +70,31 @@ Audit table need to be available before starting tool::
     );
 
 
-==========================  =================
-Config         Remark
-==========================  =================
-SCT_AUDIT_TYPE              Audit database
+==========================  ===================================================
+Config                      Remark
+==========================  ===================================================
+SCT_AUDIT_TYPE              Database type (Options: mysql, postgres, sqlite)
+SCT_AUDIT_DB_NAME           Audit database
 SCT_AUDIT_DB_SCHEMA         Audit schema
+SCT_AUDIT_DB_HOST           Database hostname
+SCT_AUDIT_DB_PORT           Database port
+SCT_AUDIT_DB_USER           Database user
+SCT_AUDIT_DB_PWD            Database password
 SCT_AUDIT_DB_TABLE          Audit table
-==========================  =================
+SCT_AUDIT_TABLE_CREATE      Create audit table while app initiation (yes/no)
+==========================  ===================================================
+
+
+**Scheduler Setup**: Uploaded files are processed asynchronously using scheduler.
+                     Additional maintenance work can also be scheduled using configuration.
+
+================================ ======================================================
+Config                           Remark
+================================ ======================================================
+SCT_SCHEDULER_INTERVAL_VALUE     Schedule interval
+SCT_SCHEDULER_JOB_MAX_ATTEMPT    Number of attempt before failing the scheduler action
+SCT_SCHEDULER_CUSTOM_JOB         Module and function name for custom scheduled task
+================================ ======================================================
 
 
 **Authentication Setup**: Currently only Okta based authentication is supported.

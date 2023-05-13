@@ -34,7 +34,7 @@ def define_routes(app):
 
         :return: Table Page <HTML>
         """
-        app.logger.info("Fetching table list, user {}".format(current_user.get_id()))
+        app.logger.info("Function: data, user {}".format(current_user.get_id()))
 
         if current_user.get_id():
             user_name = current_user.email
@@ -51,8 +51,23 @@ def define_routes(app):
         page_num = int(request.args.get("page_num")) if request.args.get("page_num") else 1
         app.logger.info("Dataset - table_name = {}, page_num = {}".format(table_name, page_num))
 
-        table_details = db.get_table_info(table_name, page_num, int(sct_ui_pagesize))
-        app.logger.info("Table details: {}".format(table_details))
+        search_col = request.args.get("search_col") if request.args.get("search_col") else None
+        search_op = request.args.get("search_op") if request.args.get("search_op") else None
+        search_val = request.args.get("search_val") if request.args.get("search_val") else None
+        app.logger.info("Search - Column: {}, Operator: {}, Value: {} ({})".format(
+            search_col,
+            search_op,
+            search_val,
+            str(type(search_val))
+        ))
+
+        if search_col and search_op and search_val:
+            table_details = audit_db.search_table_info(
+                table_name, search_col, search_op, search_val, page_num, int(sct_ui_pagesize))
+        else:
+            table_details = db.get_table_info(table_name, page_num, int(sct_ui_pagesize))
+
+        app.logger.debug("Table details: {}".format(table_details))
 
         current_pg = (page_num if 0 < page_num <= ceil(table_details["table_count"] / sct_ui_pagesize) else
                       1 if page_num < 1 else ceil(table_details["table_count"] / sct_ui_pagesize))
@@ -74,10 +89,56 @@ def define_routes(app):
                                insert_column_list=table_details["insert_columns"],
                                pk_column_list=table_details["pk_columns"],
                                data_list=table_details["table_data"],
+                               search_col=search_col,
+                               search_op=search_op,
+                               search_val=search_val,
                                logged_in_user=user_name,
                                logged_user_role=user_role,
                                current_server_time=datetime.now().strftime("%d %B, %Y %H:%M:%S (%A)")
                                )
+
+    @app.route("/data/search", methods=["GET"])
+    def search_data():
+        """
+        Search table data
+
+        :return: Table Page <HTML>
+        """
+        app.logger.info("Function: search_data, user {}".format(current_user.get_id()))
+
+        if current_user.get_id():
+            user_name = current_user.email
+            app.logger.info("Email: {}".format(user_name))
+        else:
+            user_name = None
+        user_role = get_user_role(user_name)
+        app.logger.info("User {} has assigned role {}".format(user_name, user_role))
+
+        table_list = db.get_table_list(sct_table_table_blacklist, sct_db_schema)
+        app.logger.debug("Table list: {}".format(table_list))
+
+        table_name = request.args.get("table_name") if request.args.get("table_name") else table_list[0]
+        page_num = int(request.args.get("page_num")) if request.args.get("page_num") else 1
+        app.logger.info("Dataset - table_name = {}, page_num = {}".format(table_name, page_num))
+
+        search_col = request.args.get("search_col") if request.args.get("search_col") else None
+        search_op = request.args.get("search_op") if request.args.get("search_op") else None
+        search_val = request.args.get("search_val") if request.args.get("search_val") else None
+        app.logger.info("Search - Column: {}, Operator: {}, Value: {} ({})".format(
+            search_col,
+            search_op,
+            search_val,
+            str(type(search_val))
+        ))
+
+        audit_db.add_audit(sct_audit_db_table, user_name, "SEARCH_TABLE", table_name, "SUCCESS", {
+            "Column": search_col,
+            "Operator": search_op,
+            "Value": search_val
+        })
+        return redirect(url_for(
+            'data', table_name=table_name, search_col=search_col, search_op=search_op,
+            search_val=search_val))
 
     @app.route("/audit", methods=["GET"])
     def audit():
@@ -86,7 +147,7 @@ def define_routes(app):
 
         :return: Audit Page <HTML>
         """
-        app.logger.info("Audit processing, user {}".format(current_user.get_id()))
+        app.logger.info("Function: audit, user {}".format(current_user.get_id()))
         if current_user.get_id():
             user_name = current_user.email
             app.logger.info("Email: {}".format(user_name))
@@ -101,7 +162,21 @@ def define_routes(app):
         page_num = int(request.args.get("page_num")) if request.args.get("page_num") else 1
         app.logger.info("Dataset - table_name = {}, page_num = {}".format(sct_audit_db_table, page_num))
 
-        audit_details = audit_db.get_audits(sct_audit_db_table, page_num, sct_ui_pagesize)
+        audit_search_col = request.args.get("audit_search_col") if request.args.get("audit_search_col") else None
+        audit_search_op = request.args.get("audit_search_op") if request.args.get("audit_search_op") else None
+        audit_search_val = request.args.get("audit_search_val") if request.args.get("audit_search_val") else None
+        app.logger.info("Search - Column: {}, Operator: {}, Value: {} ({})".format(
+            audit_search_col,
+            audit_search_op,
+            audit_search_val,
+            str(type(audit_search_val))
+        ))
+
+        if audit_search_col and audit_search_op and audit_search_val:
+            audit_details = audit_db.search_audits(
+                sct_audit_db_table, audit_search_col, audit_search_op, audit_search_val, page_num, sct_ui_pagesize)
+        else:
+            audit_details = audit_db.get_audits(sct_audit_db_table, page_num, sct_ui_pagesize)
         app.logger.debug("Audits: {}".format(audit_details))
         current_pg = (page_num if 0 < page_num <= ceil(audit_details["audits_count"] / sct_ui_pagesize) else
                       1 if page_num < 1 else ceil(audit_details["audits_count"] / sct_ui_pagesize))
@@ -119,10 +194,53 @@ def define_routes(app):
                                table_list=table_list,
                                table_count=audit_details["audits_count"],
                                data_list=audit_details["audits_data"],
+                               audit_search_col=audit_search_col,
+                               audit_search_op=audit_search_op,
+                               audit_search_val=audit_search_val,
                                logged_in_user=user_name,
                                logged_user_role=user_role,
                                current_server_time=datetime.now().strftime("%d %B, %Y %H:%M:%S (%A)")
                                )
+
+    @app.route("/audit/search", methods=["GET"])
+    def search_audit():
+        """
+        Get Audits
+
+        :return: Audit Page <HTML>
+        """
+        app.logger.info("Function: search_audit, user {}".format(current_user.get_id()))
+        if current_user.get_id():
+            user_name = current_user.email
+            app.logger.info("Email: {}".format(user_name))
+        else:
+            user_name = None
+        user_role = get_user_role(user_name)
+        app.logger.info("User {} has assigned role {}".format(user_name, user_role))
+
+        table_list = db.get_table_list(sct_table_table_blacklist, sct_db_schema)
+        app.logger.debug("Table list: {}".format(table_list))
+
+        page_num = int(request.args.get("page_num")) if request.args.get("page_num") else 1
+        app.logger.info("Dataset - table_name = {}, page_num = {}".format(sct_audit_db_table, page_num))
+
+        audit_search_col = request.args.get("audit_search_col") if request.args.get("audit_search_col") else None
+        audit_search_op = request.args.get("audit_search_op") if request.args.get("audit_search_op") else None
+        audit_search_val = request.args.get("audit_search_val") if request.args.get("audit_search_val") else None
+        app.logger.info("Search - Column: {}, Operator: {}, Value: {}".format(
+            audit_search_col,
+            audit_search_op,
+            audit_search_val
+        ))
+
+        audit_db.add_audit(sct_audit_db_table, user_name, "SEARCH_AUDIT", sct_audit_db_table, "SUCCESS", {
+            "Column": audit_search_col,
+            "Operator": audit_search_op,
+            "Value": audit_search_val
+        })
+        return redirect(url_for(
+            'audit', audit_search_col=audit_search_col, audit_search_op=audit_search_op,
+            audit_search_val=audit_search_val))
 
     @app.route("/api/add", methods=["POST"])
     def api_add():
@@ -131,7 +249,7 @@ def define_routes(app):
 
         :return: Table Page <HTML>
         """
-        app.logger.info("Adding record to table, user {}".format(current_user.get_id()))
+        app.logger.info("Function: api_add, user {}".format(current_user.get_id()))
         if current_user.get_id():
             user_name = current_user.email
             app.logger.info("Email: {}".format(user_name))
@@ -166,7 +284,7 @@ def define_routes(app):
 
         :return: Table Page <HTML>
         """
-        app.logger.info("Dropping record to table, user {}".format(current_user.get_id()))
+        app.logger.info("Function: api_drop, user {}".format(current_user.get_id()))
         if current_user.get_id():
             user_name = current_user.email
             app.logger.info("Email: {}".format(user_name))
@@ -181,8 +299,21 @@ def define_routes(app):
         app.logger.info("Deleted record detail - table_name = {}, page_num = {}, element_id = {}".format(table_name,
                                                                                                          page_num,
                                                                                                          element_id))
+        search_col = request.args.get("search_col") if request.args.get("search_col") else None
+        search_op = request.args.get("search_op") if request.args.get("search_op") else None
+        search_val = request.args.get("search_val") if request.args.get("search_val") else None
+        app.logger.info("Search - Column: {}, Operator: {}, Value: {} ({})".format(
+            search_col,
+            search_op,
+            search_val,
+            str(type(search_val))
+        ))
 
-        table_details = db.get_table_info(table_name, page_num, sct_ui_pagesize)
+        if search_col and search_op and search_val:
+            table_details = audit_db.search_table_info(
+                table_name, search_col, search_op, search_val, page_num, int(sct_ui_pagesize))
+        else:
+            table_details = db.get_table_info(table_name, page_num, int(sct_ui_pagesize))
         app.logger.debug("Table details: {}".format(table_details))
 
         rec_to_delete = table_details["table_data"][element_id]
@@ -203,7 +334,7 @@ def define_routes(app):
 
         :return: Table Page <HTML>
         """
-        app.logger.info("Updating record to table, user {}".format(current_user.get_id()))
+        app.logger.info("Function: api_edit, user {}".format(current_user.get_id()))
         if current_user.get_id():
             user_name = current_user.email
             app.logger.info("Email: {}".format(user_name))
@@ -219,7 +350,21 @@ def define_routes(app):
                                                                                                         page_num,
                                                                                                         element_id))
 
-        table_details = db.get_table_info(table_name, page_num, sct_ui_pagesize)
+        search_col = request.args.get("search_col") if request.args.get("search_col") else None
+        search_op = request.args.get("search_op") if request.args.get("search_op") else None
+        search_val = request.args.get("search_val") if request.args.get("search_val") else None
+        app.logger.info("Search - Column: {}, Operator: {}, Value: {} ({})".format(
+            search_col,
+            search_op,
+            search_val,
+            str(type(search_val))
+        ))
+
+        if search_col and search_op and search_val:
+            table_details = audit_db.search_table_info(
+                table_name, search_col, search_op, search_val, page_num, int(sct_ui_pagesize))
+        else:
+            table_details = db.get_table_info(table_name, page_num, int(sct_ui_pagesize))
         app.logger.debug("Table details: {}".format(table_details))
 
         rec_to_edit = table_details["table_data"][element_id]
@@ -252,7 +397,7 @@ def define_routes(app):
 
         :return: Table Page <HTML>
         """
-        app.logger.info("Uploading file to server, user {}".format(current_user.get_id()))
+        app.logger.info("Function: api_upload, user {}".format(current_user.get_id()))
         if current_user.get_id():
             user_name = current_user.email
             app.logger.info("Email: {}".format(user_name))

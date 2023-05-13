@@ -1,43 +1,46 @@
 """
-    sct_db.py
+    sct_sqlite.py
     -------
-    This module controls SCT Tool specific database interaction
+    This module controls SCT Tool specific SQLite database interaction
 """
 import json
 import csv
-import psycopg2
+import sqlite3
 from math import ceil
+
 from app.utilities.sct_utils import tuple_to_dict, tuple_to_list
-from app.utilities.databases.sct_postgres_query import (
-    SCT_QUERY_POSTGRES_GET_FK_DETAIL,
-    SCT_QUERY_POSTGRES_GET_FK_LOOKUP,
-    SCT_QUERY_POSTGRES_GET_COLMN_DETAIL,
-    SCT_QUERY_POSTGRES_GET_PK_DETAIL,
-    SCT_QUERY_POSTGRES_INSERT_ROW,
-    SCT_QUERY_POSTGRES_DROP_ROW,
-    SCT_QUERY_POSTGRES_UPDATE_ROW,
-    SCT_QUERY_POSTGRES_AUDIT_GET,
-    SCT_QUERY_POSTGRES_AUDIT_PUT,
-    SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD,
-    SCT_QUERY_POSTGRES_AUDIT_TABLE_CREATION,
-    SCT_QUERY_POSTGRES_AUDIT_SEARCH
+from app.utilities.databases.sct_sqlite_query import (
+    SCT_QUERY_AUDIT_GET,
+    SCT_QUERY_AUDIT_PUT,
+    SCT_QUERY_DROP_ROW,
+    SCT_QUERY_INSERT_ROW,
+    SCT_QUERY_UPDATE_ROW,
+    SCT_QUERY_GET_FK_DETAIL,
+    SCT_QUERY_GET_FK_LOOKUP,
+    SCT_QUERY_GET_PK_DETAIL,
+    SCT_QUERY_AUDIT_BULK_LOAD,
+    SCT_QUERY_GET_COLUMN_DETAIL,
+    SCT_QUERY_GET_TABLE_LIST,
+    SCT_QUERY_AUDIT_TABLE_CREATION,
+    SCT_QUERY_GET_AUTO_COLUMN_DETAIL,
+    SCT_QUERY_AUDIT_SEARCH
 )
 
 
 class DbBackEnd:
     """
-        Backend Database Interface.
+        Backend SQLite Database Interface.
         .. admonition:: Note
             Defines all DB Communication codes.
     """
 
     def __init__(self,
-                 database: str = "default",
+                 database: str = ":memory:",
                  schema=None,
-                 user: str = "postgres",
-                 password: str = "postgres",
-                 host: str = "localhost",
-                 port: str = "5432"):
+                 user: str = "",
+                 password: str = "",
+                 host: str = "",
+                 port: str = ""):
         """
         DbBackEnd constructor
 
@@ -48,22 +51,7 @@ class DbBackEnd:
         :param host: DB Hostname
         :param port: DB Port
         """
-        self._con = psycopg2.connect(database=database,
-                                     user=user,
-                                     password=password,
-                                     host=host,
-                                     port=port,
-                                     options="-c search_path={}".format(schema))
-
-    def finalize(self, e=None):
-        """
-        Closes a DbBackEnd
-
-        :return: None
-        """
-        print("Closing DB Connection.")
-        if self.db_connection:
-            self.db_connection.close()
+        self._con = sqlite3.connect(database, check_same_thread=False)
 
     @property
     def db_connection(self):
@@ -83,7 +71,16 @@ class DbBackEnd:
         """
         return self.db_connection.cursor()
 
-    def get_table_list(self, blk_listed_table: str = "", schema: str = "public") -> list:
+    def finalize(self, e=None):
+        """
+        Closes a DbBackEnd
+
+        :return: None
+        """
+        if self.db_connection:
+            self.db_connection.close()
+
+    def get_table_list(self, blk_listed_table: str = "", schema: str = None) -> list:
         """
         Return list of table name in DB
 
@@ -91,12 +88,11 @@ class DbBackEnd:
         :param schema: DB Schema
         :return: List of Tables
         """
+
         black_listed = set()
         curs = self.get_cursor
         curs.execute(
-            """
-            SELECT table_name FROM information_schema.tables WHERE table_schema = '{}'
-            """.format(schema)
+            SCT_QUERY_GET_TABLE_LIST
         )
         table_list = set(tuple_to_list(curs.fetchall()))
         for tbl in table_list:
@@ -118,17 +114,17 @@ class DbBackEnd:
         :return: List of rows
         """
         curs = self.get_cursor
-        curs.execute(
-            """
-            SELECT {} FROM {} ORDER BY {} OFFSET {} LIMIT {}
+        sql_qry = """
+            SELECT {} FROM {} ORDER BY {} LIMIT {},{}
             """.format(
-                ",".join(project_list),
-                table,
-                ",".join(order_list),
-                offset,
-                limit
-            )
+            ",".join(project_list),
+            table,
+            ",".join(order_list),
+            offset,
+            limit
         )
+
+        curs.execute(sql_qry)
         return curs.fetchall()
 
     def search_table_data(self, table: str, project_list: list, order_list: list,
@@ -146,7 +142,7 @@ class DbBackEnd:
         """
         curs = self.get_cursor
         sql_qry = """
-            SELECT {} FROM {} WHERE {} ORDER BY {} OFFSET {} LIMIT {}
+            SELECT {} FROM {} WHERE {} ORDER BY {} LIMIT {},{}
             """.format(
             ",".join(project_list),
             table,
@@ -171,54 +167,56 @@ class DbBackEnd:
         meta_dict["view"] = dict()
         meta_dict["insert"] = dict()
         meta_dict["fk_columns"] = dict()
+        meta_dict["pk_columns"] = []
         curs = self.get_cursor
 
-        # Get Table Primary Keys
+        # Get Primary Key
         curs.execute(
-            SCT_QUERY_POSTGRES_GET_PK_DETAIL.format(table)
+            SCT_QUERY_GET_PK_DETAIL.format(table)
         )
-        meta_dict["pk_columns"] = [cd[0] for cd in curs.fetchall()]
+        meta_dict["pk_columns"] = [cd[1] for cd in curs.fetchall() if cd[5] == 1]
 
         # Get Column List
         curs.execute(
-            SCT_QUERY_POSTGRES_GET_COLMN_DETAIL.format(table)
+            SCT_QUERY_GET_COLUMN_DETAIL.format(table)
         )
         for cd in curs.fetchall():
-            col_nm = cd[1]
-            meta_dict["view"][col_nm] = {
-                "type": cd[3],
-                "description": cd[2],
-                "length": cd[4]
+            meta_dict["view"][cd[1]] = {
+                "type": cd[2],
+                "description": "",
+                "length": 0
             }
-            if col_nm in meta_dict["pk_columns"] and cd[5] and "nextval" in cd[5]:
-                pass
-            elif cd[2] and "not updatable" in (cd[2]).lower():
+
+        # Get Insert Columns
+        curs.execute(SCT_QUERY_GET_AUTO_COLUMN_DETAIL)
+        auto_upd_col_list = [cl[1].strip() for cl in curs.fetchall() if cl[0] == table]
+        for c in (meta_dict["view"]).keys():
+            if c in auto_upd_col_list:
                 pass
             else:
-                meta_dict["insert"][col_nm] = {
-                    "type": cd[3],
-                    "description": cd[2],
-                    "length": cd[4]
+                meta_dict["insert"][c] = {
+                    "type": meta_dict["view"][c].get("type"),
+                    "description": meta_dict["view"][c].get("description"),
+                    "length": meta_dict["view"][c].get("length")
                 }
 
-            # Get Table Foreign Keys
-            curs.execute(SCT_QUERY_POSTGRES_GET_FK_DETAIL)
-            for fkd in curs.fetchall():
-                if fkd[2] == table:
-                    meta_dict["fk_columns"][fkd[3]] = {
-                        "table": fkd[4],
-                        "column": fkd[5],
-                        "data": []
-                    }
+        # Get Foreign Key
+        curs.execute(SCT_QUERY_GET_FK_DETAIL.format(table))
+        for fkd in curs.fetchall():
+            meta_dict["fk_columns"][fkd[3]] = {
+                "table": fkd[2],
+                "column": fkd[4],
+                "data": []
+            }
             if load_fk_data:
-                for fk in meta_dict["fk_columns"]:
-                    curs.execute(
-                        SCT_QUERY_POSTGRES_GET_FK_LOOKUP.format(
-                            meta_dict["fk_columns"][fk].get("column"),
-                            meta_dict["fk_columns"][fk].get("table")
-                        )
+                curs.execute(
+                    SCT_QUERY_GET_FK_LOOKUP.format(
+                        fkd[4],
+                        fkd[2]
                     )
-                    meta_dict["fk_columns"][fk]["data"] = tuple_to_list(curs.fetchall())
+                )
+                meta_dict["fk_columns"][fkd[3]]["data"] = tuple_to_list(curs.fetchall())
+
         return meta_dict
 
     def get_table_info(self, table: str, batch: int = 1, page_size: int = 3) -> dict:
@@ -257,7 +255,7 @@ class DbBackEnd:
                                          meta_dict["view_columns"].keys(),
                                          meta_dict["pk_columns"],
                                          page_size,
-                                         (batch_num - 1) * page_size)
+                                         page_size * (batch_num - 1))
         meta_dict["table_data"] = tuple_to_dict([k for k in meta_dict["view_columns"].keys()], table_data)
 
         return meta_dict
@@ -286,14 +284,22 @@ class DbBackEnd:
         meta_dict["fk_columns"] = column_detail["fk_columns"]
 
         # Search condition
-        col_type = (str(meta_dict["view_columns"][search_col].get("type"))).lower()
+        col_type = str(meta_dict["view_columns"][search_col].get("type"))
         if search_op == 'like':
-            if ("int" in col_type and "point" not in col_type) or ("double" in col_type or "numeric" in col_type):
+            if (("int" in col_type.lower() and
+                 "point" not in col_type.lower()) or
+                    ("double" in col_type.lower() or
+                     "numeric" in col_type.lower() or
+                     "float" in col_type.lower())):
                 search_cond = "{} = {}".format(search_col, search_val)
             else:
                 search_cond = "{} {} '%{}%'".format(search_col, search_op, search_val)
         else:
-            if ("int" in col_type and "point" not in col_type) or ("double" in col_type or "numeric" in col_type):
+            if (("int" in col_type.lower() and
+                 "point" not in col_type.lower()) or
+                    ("double" in col_type.lower() or
+                     "numeric" in col_type.lower() or
+                     "float" in col_type.lower())):
                 search_cond = "{} {} {}".format(search_col, search_op, search_val)
             else:
                 search_cond = "{} {} '{}'".format(search_col, search_op, search_val)
@@ -333,14 +339,16 @@ class DbBackEnd:
         table_details = self.get_table_columns(table)
         qry_args = []
         for col in table_details["insert"].keys():
-            if (("int" in table_details["insert"][col]["type"] and
-                 "point" not in table_details["insert"][col]["type"]) or
-                    ("double" in table_details["insert"][col]["type"] or
-                     "numeric" in table_details["insert"][col]["type"])):
+            col_type = str(table_details["insert"][col]["type"])
+            if (("int" in col_type.lower() and
+                 "point" not in col_type.lower()) or
+                    ("double" in col_type.lower() or
+                     "numeric" in col_type.lower() or
+                     "float" in col_type.lower())):
                 qry_args.append("{}".format(kwargs[col]))
             else:
                 qry_args.append("'{}'".format(kwargs[col]))
-        insert_qry = SCT_QUERY_POSTGRES_INSERT_ROW.format(
+        insert_qry = SCT_QUERY_INSERT_ROW.format(
             table,
             ",".join(table_details["insert"].keys()),
             ",".join(qry_args)
@@ -363,25 +371,29 @@ class DbBackEnd:
         table_details = self.get_table_columns(table)
         qry_args = []
         if len(table_details["pk_columns"]):
-            for col_nm in table_details["pk_columns"]:
-                if (("int" in table_details["view"][col_nm]["type"] and
-                     "point" not in table_details["view"][col_nm]["type"]) or
-                        ("double" in table_details["view"][col_nm]["type"] or
-                         "numeric" in table_details["view"][col_nm]["type"])):
-                    qry_args.append("{}={}".format(col_nm, kwargs[col_nm]))
+            for col in table_details["pk_columns"]:
+                col_type = str(table_details["view"][col]["type"])
+                if (("int" in col_type.lower() and
+                     "point" not in col_type.lower()) or
+                        ("double" in col_type.lower() or
+                         "numeric" in col_type.lower() or
+                         "float" in col_type.lower())):
+                    qry_args.append("{}={}".format(col, kwargs[col]))
                 else:
-                    qry_args.append("{}='{}'".format(col_nm, kwargs[col_nm]))
+                    qry_args.append("{}='{}'".format(col, kwargs[col]))
         else:
-            for col_nm in table_details["view"].keys():
-                if (("int" in table_details["view"][col_nm]["type"] and
-                     "point" not in table_details["view"][col_nm]["type"]) or
-                        ("double" in table_details["view"][col_nm]["type"] or
-                         "numeric" in table_details["view"][col_nm]["type"])):
-                    qry_args.append("{}={}".format(col_nm, kwargs[col_nm]))
+            for col in table_details["view"].keys():
+                col_type = str(table_details["view"][col]["type"])
+                if (("int" in col_type.lower() and
+                     "point" not in col_type.lower()) or
+                        ("double" in col_type.lower() or
+                         "numeric" in col_type.lower() or
+                         "float" in col_type.lower())):
+                    qry_args.append("{}={}".format(col, kwargs[col]))
                 else:
-                    qry_args.append("{}='{}'".format(col_nm, kwargs[col_nm]))
+                    qry_args.append("{}='{}'".format(col, kwargs[col]))
 
-        drop_qry = SCT_QUERY_POSTGRES_DROP_ROW.format(
+        drop_qry = SCT_QUERY_DROP_ROW.format(
             table,
             " and ".join(qry_args)
         )
@@ -401,18 +413,18 @@ class DbBackEnd:
         """
         # Query preparation
         table_details = self.get_table_columns(table)
-
-        # Where Clause
         qry_args = []
         if len(table_details["pk_columns"]):
-            for col_nm in table_details["pk_columns"]:
-                if (("int" in table_details["view"][col_nm]["type"] and
-                     "point" not in table_details["view"][col_nm]["type"]) or
-                        ("double" in table_details["view"][col_nm]["type"] or
-                         "numeric" in table_details["view"][col_nm]["type"])):
-                    qry_args.append("{}={}".format(col_nm, kwargs[col_nm]))
+            for col in table_details["pk_columns"]:
+                col_type = str(table_details["view"][col]["type"])
+                if (("int" in col_type.lower() and
+                     "point" not in col_type.lower()) or
+                        ("double" in col_type.lower() or
+                         "numeric" in col_type.lower() or
+                         "float" in col_type.lower())):
+                    qry_args.append("{}={}".format(col, kwargs[col]))
                 else:
-                    qry_args.append("{}='{}'".format(col_nm, kwargs[col_nm]))
+                    qry_args.append("{}='{}'".format(col, kwargs[col]))
         else:
             return
 
@@ -420,15 +432,17 @@ class DbBackEnd:
         set_args = []
         for col in table_details["insert"].keys():
             if col not in table_details["pk_columns"]:
-                if (("int" in table_details["insert"][col]["type"] and
-                     "point" not in table_details["insert"][col]["type"]) or
-                        ("double" in table_details["insert"][col]["type"] or
-                         "numeric" in table_details["insert"][col]["type"])):
+                col_type = str(table_details["view"][col]["type"])
+                if (("int" in col_type.lower() and
+                     "point" not in col_type.lower()) or
+                        ("double" in col_type.lower() or
+                         "numeric" in col_type.lower() or
+                         "float" in col_type.lower())):
                     set_args.append("{}={}".format(col, kwargs[col]))
                 else:
                     set_args.append("{}='{}'".format(col, kwargs[col]))
 
-        edit_qry = SCT_QUERY_POSTGRES_UPDATE_ROW.format(
+        edit_qry = SCT_QUERY_UPDATE_ROW.format(
             table,
             ", ".join(set_args),
             " and ".join(qry_args)
@@ -447,7 +461,7 @@ class DbBackEnd:
         :return: None
         """
         curs = self.get_cursor
-        query_str = SCT_QUERY_POSTGRES_AUDIT_TABLE_CREATION.format(
+        query_str = SCT_QUERY_AUDIT_TABLE_CREATION.format(
             audit_table
         )
 
@@ -478,7 +492,7 @@ class DbBackEnd:
         batch_num = (batch if 0 < batch < ceil(meta_dict["audits_count"] / page_size) else
                      1 if batch < 1 else ceil(meta_dict["audits_count"] / page_size))
 
-        adt_qry = SCT_QUERY_POSTGRES_AUDIT_GET.format(audit_table, (batch_num - 1) * page_size, page_size)
+        adt_qry = SCT_QUERY_AUDIT_GET.format(audit_table, (batch_num - 1) * page_size, page_size)
         curs.execute(adt_qry)
 
         audit_columns = ["audit_user", "audit_time", "operation_performed",
@@ -504,7 +518,6 @@ class DbBackEnd:
         meta_dict = dict()
 
         # Search condition
-        search_cond = ""
         if audit_search_op == 'like':
             if audit_search_col in ["audit_id"]:
                 search_cond = "{} = {}".format(audit_search_col, audit_search_val)
@@ -529,10 +542,10 @@ class DbBackEnd:
                      1 if batch < 1 else ceil(meta_dict["audits_count"] / page_size))
 
         if len(search_cond):
-            adt_qry = SCT_QUERY_POSTGRES_AUDIT_SEARCH.format(
+            adt_qry = SCT_QUERY_AUDIT_SEARCH.format(
                 audit_table, search_cond, (batch_num - 1) * page_size, page_size)
         else:
-            adt_qry = SCT_QUERY_POSTGRES_AUDIT_GET.format(audit_table, (batch_num - 1) * page_size, page_size)
+            adt_qry = SCT_QUERY_AUDIT_GET.format(audit_table, (batch_num - 1) * page_size, page_size)
         curs.execute(adt_qry)
 
         audit_columns = ["audit_user", "audit_time", "operation_performed",
@@ -542,7 +555,7 @@ class DbBackEnd:
         return meta_dict
 
     def add_audit(self, audit_table: str, status: str, audit_user: str, operation_performed: str,
-                  table_name: str, operation_metadata: str):
+                  table_name: str, operation_metadata: dict):
         """
         Insert a Audit record
 
@@ -555,7 +568,7 @@ class DbBackEnd:
         :return: None
         """
         curs = self.get_cursor
-        query_str = SCT_QUERY_POSTGRES_AUDIT_PUT.format(
+        query_str = SCT_QUERY_AUDIT_PUT.format(
             audit_table,
             audit_user if audit_user else "ANONYMOUS",
             operation_performed,
@@ -578,7 +591,7 @@ class DbBackEnd:
         # Fetch data
         curs = self.get_cursor
         curs.execute(
-            SCT_QUERY_POSTGRES_AUDIT_BULK_LOAD.format(
+            SCT_QUERY_AUDIT_BULK_LOAD.format(
                 audit_table
             )
         )
@@ -616,7 +629,7 @@ class DbBackEnd:
         """
         total_rec = 0
         curs = self.get_cursor
-        table_details = self.get_table_columns(table)
+        table_details = self.get_table_columns(table)["columns"]
 
         # Read in CSV
         with open(file_path, mode='r') as file:
@@ -628,14 +641,15 @@ class DbBackEnd:
                 else:
                     qry_args = []
                     for c, col in enumerate(column_list):
-                        if (("int" in table_details["insert"][col]["type"] and
-                             "point" not in table_details["insert"][col]["type"]) or
-                                ("double" in table_details["insert"][col]["type"] or
-                                 "numeric" in table_details["insert"][col]["type"])):
+                        if (("int" in (table_details[col]["type"]).lower() and
+                             "point" not in (table_details[col]["type"]).lower()) or
+                                ("double" in (table_details[col]["type"]).lower() or
+                                 "numeric" in (table_details[col]["type"]).lower() or
+                                 "float" in (table_details[col]["type"]).lower())):
                             qry_args.append("{}".format(row[c]))
                         else:
                             qry_args.append("'{}'".format(row[c]))
-                    insert_qry = SCT_QUERY_POSTGRES_INSERT_ROW.format(
+                    insert_qry = SCT_QUERY_INSERT_ROW.format(
                         table,
                         ",".join(column_list),
                         ",".join(qry_args)

@@ -1,16 +1,16 @@
 app.utilities package
 =====================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   app.utilities.databases
+
 Submodules
 ----------
-
-app.utilities.sct\_db module
-----------------------------
-
-.. automodule:: app.utilities.sct_db
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 app.utilities.sct\_env module
 -----------------------------
@@ -32,14 +32,6 @@ app.utilities.sct\_mail module
 ------------------------------
 
 .. automodule:: app.utilities.sct_mail
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-app.utilities.sct\_query module
--------------------------------
-
-.. automodule:: app.utilities.sct_query
    :members:
    :undoc-members:
    :show-inheritance:
