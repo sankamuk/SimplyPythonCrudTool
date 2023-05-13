@@ -8,7 +8,7 @@ Simple Python CRUD Tool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-.. warning:: Current implementation only supports ***Postgres***, but support for all other **major RDBMS** will follow soon.
+.. warning:: Current implementation only supports ***Postgres, MysQL, SQLite***, but support for all other **major RDBMS** will follow soon.
 
 
 Overview
@@ -19,7 +19,7 @@ Overview
 * Auto **discovery** of tables from database schema. Also allow not to list specific table using patterns.
 * Granular column based **search** capability.
 * CSV based **download** of data.
-* CSV based **bulk insert**.
+* CSV based asynchronous **bulk insert**.
 * **Audit** for all operation with change tracking capability.
 * **Authentication** and new user registration support.
 * Role based **authorization** to specific operations.

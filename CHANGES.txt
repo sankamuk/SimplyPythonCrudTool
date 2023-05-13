@@ -1,17 +1,17 @@
 - [1.0.0]
-    Allow support connecting to Postgres RDBMS [FEATURE]
-    Allow browsing tables in DB [FEATURE]
-    Allow table data view using pagination [FEATURE]
-    Allow CSV based data extraction [FEATURE]
-    Allow row wise data deletion and update [FEATURE]
-    Allow table wise delete full data [FEATURE]
-    Allow single row insert [FEATURE]
-    Allow bulk insert using execl, handled in asynchronous job [FEATURE]
-    Allow auditing of all operations in DB [FEATURE]
-    Allow change tracking feature for table data in audit [FEATURE]
-    Allow audit view and download [FEATURE]
-    Allow authentication using Okta [FEATURE]
-    Allow new user registration request in Okta domain [FEATURE]
-    Allow role based access control [FEATURE]
-    Allow column based searching for table data [FEATURE]
-    Allow column based searching for audit data [FEATURE]
+    [FEATURE] Allow support connecting to Postgres RDBMS
+    [FEATURE] Allow browsing tables in DB
+    [FEATURE] Allow table data view using pagination
+    [FEATURE] Allow CSV based data extraction
+    [FEATURE] Allow row wise data deletion and update
+    [FEATURE] Allow table wise delete full data
+    [FEATURE] Allow single row insert
+    [FEATURE] Allow bulk insert using execl, handled in asynchronous job
+    [FEATURE] Allow auditing of all operations in DB
+    [FEATURE] Allow change tracking feature for table data in audit
+    [FEATURE] Allow audit view and download
+    [FEATURE] Allow authentication using Okta
+    [FEATURE] Allow new user registration request in Okta domain
+    [FEATURE] Allow role based access control
+    [FEATURE] Allow column based searching for table data
+    [FEATURE] Allow column based searching for audit data

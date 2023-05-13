@@ -9,14 +9,6 @@
 """
 from setuptools import setup, find_packages
 
-# import re
-# latest_version = None
-# with open('CHANGES.txt') as f:
-#     for line in f:
-#         match = re.findall("- \[[0-9]+\.[0-9]+\.[0-9]+\]", line.strip())
-#         if len(match) > 0:
-#             latest_version = re.findall("[0-9]+\.[0-9]+\.[0-9]+", match[0])
-
 setup(
     name='simple-python-crud-tool',
     version='1.0.0',
@@ -35,6 +27,7 @@ setup(
         'pyOpenSSL',
         'requests',
         'psycopg2-binary',
+        'mysql-connector-python',
         'Flask-Excel',
         'Flask-Reuploaded',
         'Flask-APScheduler',

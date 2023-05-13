@@ -17,6 +17,7 @@
     <script src="_static/bizstyle.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="app.utilities.databases package" href="app.utilities.databases.html" />
     <link rel="prev" title="app.routes package" href="app.routes.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <!--[if lt IE 9]>
@@ -32,6 +33,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="app.utilities.databases.html" title="app.utilities.databases package"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="app.routes.html" title="app.routes package"
              accesskey="P">previous</a> |</li>
@@ -49,252 +53,113 @@
             
   <section id="app-utilities-package">
 <h1>app.utilities package<a class="headerlink" href="#app-utilities-package" title="Permalink to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="app.utilities.databases.html">app.utilities.databases package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app.utilities.databases.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.utilities.databases.html#module-app.utilities.databases.sct_db">app.utilities.databases.sct_db module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#sct-db-py">sct_db.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_db.init_app_database"><code class="docutils literal notranslate"><span class="pre">init_app_database()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_db.init_audit_database"><code class="docutils literal notranslate"><span class="pre">init_audit_database()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.utilities.databases.html#module-app.utilities.databases.sct_mysql">app.utilities.databases.sct_mysql module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#id1">sct_db.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd"><code class="docutils literal notranslate"><span class="pre">DbBackEnd</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.add_audit"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_audit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.add_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_table_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.bulk_load_table_records"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.bulk_load_table_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.create_audit_table"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.create_audit_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.db_connection"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.db_connection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.drop_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.drop_table_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.edit_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.edit_table_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.finalize"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.finalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.get_audits"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_audits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.get_cursor"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_cursor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.get_pending_bulk_loading"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_pending_bulk_loading()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.get_table_columns"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.get_table_data"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.get_table_info"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.get_table_list"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.search_audits"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.search_audits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.search_table_data"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.search_table_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_mysql.DbBackEnd.search_table_info"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.search_table_info()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.utilities.databases.html#module-app.utilities.databases.sct_mysql_query">app.utilities.databases.sct_mysql_query module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#sct-mysql-query-py">sct_mysql_query.py</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.utilities.databases.html#module-app.utilities.databases.sct_postgres">app.utilities.databases.sct_postgres module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#id2">sct_db.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd"><code class="docutils literal notranslate"><span class="pre">DbBackEnd</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.add_audit"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_audit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.add_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_table_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.bulk_load_table_records"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.bulk_load_table_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.create_audit_table"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.create_audit_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.db_connection"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.db_connection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.drop_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.drop_table_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.edit_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.edit_table_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.finalize"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.finalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.get_audits"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_audits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.get_cursor"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_cursor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.get_pending_bulk_loading"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_pending_bulk_loading()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.get_table_columns"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.get_table_data"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.get_table_info"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.get_table_list"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.search_audits"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.search_audits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.search_table_data"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.search_table_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_postgres.DbBackEnd.search_table_info"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.search_table_info()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.utilities.databases.html#module-app.utilities.databases.sct_postgres_query">app.utilities.databases.sct_postgres_query module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#sct-query-py">sct_query.py</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.utilities.databases.html#module-app.utilities.databases.sct_sqlite">app.utilities.databases.sct_sqlite module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#sct-sqlite-py">sct_sqlite.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd"><code class="docutils literal notranslate"><span class="pre">DbBackEnd</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.add_audit"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_audit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.add_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_table_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.bulk_load_table_records"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.bulk_load_table_records()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.create_audit_table"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.create_audit_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.db_connection"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.db_connection</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.drop_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.drop_table_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.edit_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.edit_table_record()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.finalize"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.finalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.get_audits"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_audits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.get_cursor"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_cursor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.get_pending_bulk_loading"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_pending_bulk_loading()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.get_table_columns"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_columns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.get_table_data"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.get_table_info"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.get_table_list"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.search_audits"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.search_audits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.search_table_data"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.search_table_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utilities.databases.html#app.utilities.databases.sct_sqlite.DbBackEnd.search_table_info"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.search_table_info()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.utilities.databases.html#module-app.utilities.databases.sct_sqlite_query">app.utilities.databases.sct_sqlite_query module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="app.utilities.databases.html#sct-sqlite-query-py">sct_sqlite_query.py</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.utilities.databases.html#module-app.utilities.databases">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
-</section>
-<section id="module-app.utilities.sct_db">
-<span id="app-utilities-sct-db-module"></span><h2>app.utilities.sct_db module<a class="headerlink" href="#module-app.utilities.sct_db" title="Permalink to this heading">¶</a></h2>
-<section id="sct-db-py">
-<h3>sct_db.py<a class="headerlink" href="#sct-db-py" title="Permalink to this heading">¶</a></h3>
-<p>This module controls SCT Tool specific database interaction</p>
-</section>
-<dl class="py class">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.utilities.sct_db.</span></span><span class="sig-name descname"><span class="pre">DbBackEnd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'postgres'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'postgres'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'5432'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Backend Database Interface.
-.. admonition:: Note</p>
-<blockquote>
-<div><p>Defines all DB Communication codes.</p>
-</div></blockquote>
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.add_audit">
-<span class="sig-name descname"><span class="pre">add_audit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audit_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audit_user</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_performed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.add_audit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Insert a Audit record</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>audit_table</strong> – Audit table name</p></li>
-<li><p><strong>status</strong> – Audit operation status</p></li>
-<li><p><strong>audit_user</strong> – Audit user</p></li>
-<li><p><strong>operation_performed</strong> – Audit operation</p></li>
-<li><p><strong>table_name</strong> – Table impacted</p></li>
-<li><p><strong>operation_metadata</strong> – Operation detail</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.add_table_record">
-<span class="sig-name descname"><span class="pre">add_table_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.add_table_record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add row to table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> – Table name</p></li>
-<li><p><strong>kwargs</strong> – List of column values of new record</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.bulk_load_table_records">
-<span class="sig-name descname"><span class="pre">bulk_load_table_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.bulk_load_table_records" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add row to table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> – Table name</p></li>
-<li><p><strong>file_path</strong> – File name to load table from</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.db_connection">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">db_connection</span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.db_connection" title="Permalink to this definition">¶</a></dt>
-<dd><p>DB Connection</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Postgres DB API Connection</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.drop_table_record">
-<span class="sig-name descname"><span class="pre">drop_table_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.drop_table_record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Drop row from table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> – Table name</p></li>
-<li><p><strong>kwargs</strong> – List of column values of new record</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.edit_table_record">
-<span class="sig-name descname"><span class="pre">edit_table_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.edit_table_record" title="Permalink to this definition">¶</a></dt>
-<dd><p>Edit row to table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> – Table name</p></li>
-<li><p><strong>kwargs</strong> – List of column values of new record</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.finalize">
-<span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.finalize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Closes a DbBackEnd</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_audits">
-<span class="sig-name descname"><span class="pre">get_audits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audit_table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_audits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get Audits</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>audit_table</strong> – Audit table name</p></li>
-<li><p><strong>batch</strong> – Row batch, where each batch will be of size 50 at least</p></li>
-<li><p><strong>page_size</strong> – Max record per page</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Audit data</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_cursor">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_cursor</span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_cursor" title="Permalink to this definition">¶</a></dt>
-<dd><p>DB Cursor</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Postgres DB API Cursor from connection</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_pending_bulk_loading">
-<span class="sig-name descname"><span class="pre">get_pending_bulk_loading</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audit_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_failure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_pending_bulk_loading" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of files pending for processing</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>audit_table</strong> – Audit table name</p></li>
-<li><p><strong>max_failure</strong> – Max number of failure before we discard a file</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>dictionary with keys for table name and file to load</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_table_columns">
-<span class="sig-name descname"><span class="pre">get_table_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_fk_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_table_columns" title="Permalink to this definition">¶</a></dt>
-<dd><p>Column list for a table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> – Table name</p></li>
-<li><p><strong>load_fk_data</strong> – Whether to load FK column data for lookup</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Metadata dictionary</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_table_data">
-<span class="sig-name descname"><span class="pre">get_table_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_table_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fetch data for a table</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> – Table name</p></li>
-<li><p><strong>project_list</strong> – List of columns to project</p></li>
-<li><p><strong>order_list</strong> – List of columns to order data by</p></li>
-<li><p><strong>limit</strong> – Max rows fetched</p></li>
-<li><p><strong>offset</strong> – Row batch, where each batch will be of size 50 at least</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of rows</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_table_info">
-<span class="sig-name descname"><span class="pre">get_table_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_table_info" title="Permalink to this definition">¶</a></dt>
-<dd><p>Table metadata</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> – Table name</p></li>
-<li><p><strong>batch</strong> – Row batch, where each batch will be of size 50 at least</p></li>
-<li><p><strong>page_size</strong> – Max record per page</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Metadata dictionary</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.utilities.sct_db.DbBackEnd.get_table_list">
-<span class="sig-name descname"><span class="pre">get_table_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'public'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#app.utilities.sct_db.DbBackEnd.get_table_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return list of table name in DB</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>schema</strong> – DB Schema</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of Tables</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 <section id="module-app.utilities.sct_env">
 <span id="app-utilities-sct-env-module"></span><h2>app.utilities.sct_env module<a class="headerlink" href="#module-app.utilities.sct_env" title="Permalink to this heading">¶</a></h2>
@@ -348,13 +213,6 @@
 </dd></dl>
 
 </section>
-<section id="module-app.utilities.sct_query">
-<span id="app-utilities-sct-query-module"></span><h2>app.utilities.sct_query module<a class="headerlink" href="#module-app.utilities.sct_query" title="Permalink to this heading">¶</a></h2>
-<section id="sct-query-py">
-<h3>sct_query.py<a class="headerlink" href="#sct-query-py" title="Permalink to this heading">¶</a></h3>
-<p>This module consists of RDBMS Queries</p>
-</section>
-</section>
 <section id="module-app.utilities.sct_schedules">
 <span id="app-utilities-sct-schedules-module"></span><h2>app.utilities.sct_schedules module<a class="headerlink" href="#module-app.utilities.sct_schedules" title="Permalink to this heading">¶</a></h2>
 <section id="sct-schedules-py">
@@ -363,14 +221,11 @@
 </section>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.utilities.sct_schedules.sct_scheduled_bulk_loader">
-<span class="sig-prename descclassname"><span class="pre">app.utilities.sct_schedules.</span></span><span class="sig-name descname"><span class="pre">sct_scheduled_bulk_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_schedules.sct_scheduled_bulk_loader" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">app.utilities.sct_schedules.</span></span><span class="sig-name descname"><span class="pre">sct_scheduled_bulk_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.utilities.sct_schedules.sct_scheduled_bulk_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>SCT Tool Scheduled Tasks</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>app</strong> – Application instance</p></li>
-<li><p><strong>db</strong> – Database Interface Object &lt;DbBackEnd&gt;</p></li>
-</ul>
+<dd class="field-odd"><p><strong>app</strong> – Application instance</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
@@ -493,28 +348,8 @@
     <h3><a href="index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">app.utilities package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-app.utilities.sct_db">app.utilities.sct_db module</a><ul>
-<li><a class="reference internal" href="#sct-db-py">sct_db.py</a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd"><code class="docutils literal notranslate"><span class="pre">DbBackEnd</span></code></a><ul>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.add_audit"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_audit()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.add_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.add_table_record()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.bulk_load_table_records"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.bulk_load_table_records()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.db_connection"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.db_connection</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.drop_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.drop_table_record()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.edit_table_record"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.edit_table_record()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.finalize"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.finalize()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_audits"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_audits()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_cursor"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_cursor</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_pending_bulk_loading"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_pending_bulk_loading()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_table_columns"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_columns()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_table_data"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_data()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_table_info"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_info()</span></code></a></li>
-<li><a class="reference internal" href="#app.utilities.sct_db.DbBackEnd.get_table_list"><code class="docutils literal notranslate"><span class="pre">DbBackEnd.get_table_list()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li><a class="reference internal" href="#module-app.utilities.sct_env">app.utilities.sct_env module</a><ul>
 <li><a class="reference internal" href="#sct-env-py">sct_env.py</a></li>
 </ul>
@@ -527,10 +362,6 @@
 <li><a class="reference internal" href="#sct-mail-py">sct_mail.py</a></li>
 <li><a class="reference internal" href="#app.utilities.sct_mail.enable_email_support"><code class="docutils literal notranslate"><span class="pre">enable_email_support()</span></code></a></li>
 <li><a class="reference internal" href="#app.utilities.sct_mail.send_mail"><code class="docutils literal notranslate"><span class="pre">send_mail()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-app.utilities.sct_query">app.utilities.sct_query module</a><ul>
-<li><a class="reference internal" href="#sct-query-py">sct_query.py</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-app.utilities.sct_schedules">app.utilities.sct_schedules module</a><ul>
@@ -569,6 +400,11 @@
     <p class="topless"><a href="app.routes.html"
                           title="previous chapter">app.routes package</a></p>
   </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="app.utilities.databases.html"
+                          title="next chapter">app.utilities.databases package</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -599,6 +435,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="app.utilities.databases.html" title="app.utilities.databases package"
+             >next</a> |</li>
         <li class="right" >
           <a href="app.routes.html" title="app.routes package"
              >previous</a> |</li>
